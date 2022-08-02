@@ -1,0 +1,528 @@
+---
+title: |
+  \vspace{-30pt}
+  <center> **2021-2022 By the Numbers** </center>
+subtitle: <center> **Partnership4Success (P4S) – Academic Year** </center>
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{fancyhdr} \usepackage{caption}
+geometry: right=0.75in, left=0.75in, top=0.75in
+---
+\addtolength{\headheight}{50pt}
+\pagestyle{fancyplain}
+\lhead{\includegraphics[height=1.3cm]{P4Slogo.jpg}}
+\renewcommand{\headrulewidth}{0pt}
+\captionsetup[table]{labelformat=empty}
+\frenchspacing
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE) 
+# margin=1.0in
+```
+
+```{r include=FALSE, warning=FALSE}
+# % make more space for the header
+# % use fancy for all pages except chapter start
+# % right logo
+# % remove rule below header
+# % get rid of automatic captions (and the table 1, 2 numbering)
+library(pagedown)
+library(ggplot2)
+library(kableExtra)
+library(tidyverse)
+library(kableExtra)
+library(gridExtra)
+library(scales)
+library(data.table)
+library(dplyr)
+library(formattable)
+library(tidyr)
+library(htmltools)
+library(webshot)
+library(flextable)
+library(signs)
+# webshot::install_phantomjs()
+```
+
+<!-- ```{css include=FALSE} -->
+<!-- # .table tr:nth-child(even) { background: #eee; } -->
+<!-- ``` -->
+
+```{r include=FALSE}
+dat1 = read.csv("DESSA 40 Partnership4Success - 6_7_2022.csv")
+dat2 = read.csv("DESSA K-8 Partnership4Success - 6_7_2022.csv")
+dat3 = read.csv("DESSA-HSE mini Partnership4Success - 6_7_2022.csv")
+dat4 = read.csv("DESSA-HSE Partnership4Success - 6_7_2022.csv")
+dat5 = read.csv("DESSA-HSE Student Self Report Partnership4Success - 6_7_2022.csv")
+dat6 = read.csv("DESSA-mini K-8 All Forms Partnership4Success - 6_7_2022.csv")
+```
+
+<!-- Page 2 -->
+
+```{r include=FALSE}
+# get site name/rating period name/rating date from both mini & full sized data -> merge into 1 df
+merged.dat = rbind(dat1[, c("SiteName", "RatingPeriodName", "RatingDate", "StudentId", "RaterName")], 
+                   dat2[, c("SiteName", "RatingPeriodName", "RatingDate", "StudentId", "RaterName")], 
+                   dat3[, c("SiteName", "RatingPeriodName", "RatingDate", "StudentId", "RaterName")],
+                   dat4[,c("SiteName", "RatingPeriodName", "RatingDate", "StudentId", "RaterName")], 
+                   dat6[, c("SiteName", "RatingPeriodName", "RatingDate", "StudentId", "RaterName")])
+# nrow(dat1) + nrow(dat2) + nrow(dat3) + nrow(dat4) + nrow(dat6) == nrow(merged.dat)
+# table(merged.dat$RatingPeriodName) #Rating Period 1
+```
+
+```{r include=FALSE}
+# 1329 rows where RatingPeriodName is missing data for dat6 but dates show 2016 so we don't care
+# View((filter(dat6, dat6$RatingPeriodName==""))$RatingDate)
+# View((filter(dat6, dat6$RatingPeriodName==""))$TimeDate.Stamp..UTC.)
+
+# 7 rows total in data, all Big Brothers but all rated in January 2021 so I did not include
+# View(dat5$RatingDate)
+# View(dat5$TimeDate.Stamp..UTC.)
+
+# table(merged.dat$RatingPeriodName)
+
+# for reference rating period 1 in 9/21/21 is around september '21 at the earliest
+# View(sort((filter(merged.dat, merged.dat$RatingPeriodName=="2021-2022 SEL-C Rating Period 1"))$RatingDate))
+# View(sort((filter(merged.dat, merged.dat$RatingPeriodName=="2021 Summer Rating Period 1"))$RatingDate)) 
+# ^^ 2021 summer period 1 ranges 6/21/21 to 7/29/21
+# View(sort((filter(merged.dat, merged.dat$RatingPeriodName=="2021 Summer Rating Period 2"))$RatingDate))
+# ^^ 2021 summer period 2 ranges from to 7/26/21 to 8/27/21
+# excluded summer
+# View(sort((filter(merged.dat, merged.dat$RatingPeriodName=="2021 Summer Rating Period 3"))$RatingDate))
+
+# excluded all "Rating Period 1"..."#Rating Period 5" because all were 2016
+# checkout = c("Rating Period 1", "Rating Period 2", "Rating Period 3", "Rating Period 4", "Rating Period 5")
+# View(sort((filter(merged.dat, merged.dat$RatingPeriodName %in% checkout))$RatingDate))
+
+# excluded all the weird ones with no yr info in name but all are 2016/17/18 data:
+# checkout = c("Eckerd Test Period", "OHCO Test Period ", "Practice Rating Period", "Rating Period Other",
+#              "Homeless Families Foundation Full DESSA EOY", "Onboarding EXAMPLE", "UWCO Test Period")
+# View(sort((filter(merged.dat, merged.dat$RatingPeriodName %in% checkout))$RatingDate))
+```
+
+```{r include=FALSE}
+# filter 2021-2022 relevant data
+periods.21.22 = c("2021-2022 SEL-C Rating Period 1",
+                  "2021-2022 SEL-C Rating Period 2",
+                  "2021-2022 SEL-C Rating Period 3",
+                  "2021-2022 High School Rating Period 1",
+                  "2021-2022 High School Rating Period 2",
+                  "2021-2022 High School Rating Period 3")
+merged.dat.21.22 = filter(merged.dat, merged.dat$RatingPeriodName %in% periods.21.22)
+length(unique(merged.dat.21.22$RaterName))
+# create the table on page 2:
+dessa_rating_col = merged.dat.21.22 %>% group_by(SiteName) %>% 
+  summarize("No. of Assessments"=n(), "No. of (Unique) Students"=n_distinct(StudentId), 
+            .groups = "drop_last") %>% rename(Agency = SiteName)
+# dessa_rating_col
+dessa_rating_col = dessa_rating_col %>% 
+  add_row(Agency = "Total", 
+          `No. of Assessments` = sum(dessa_rating_col$`No. of Assessments`),
+          `No. of (Unique) Students` = sum(dessa_rating_col$`No. of (Unique) Students`))
+```
+\vspace{-20pt}
+
+```{r include=FALSE}
+# SEC and SET are different names so first merge full and mini data separately
+common.cols = intersect(intersect(names(dat1), names(dat2)), names(dat4)) # merge just full-sized data
+common.cols.mini = intersect(names(dat3), names(dat6)) # merge mini data
+periods1and2 = c("2021-2022 SEL-C Rating Period 1",
+                 "2021-2022 High School Rating Period 1",
+                 "2021-2022 SEL-C Rating Period 2",
+                 "2021-2022 High School Rating Period 2")
+```
+
+\vspace{-0.5cm}
+
+## I. DESSA Assessment Overview
+
+```{r echo=FALSE}
+kable(dessa_rating_col, "latex", booktabs = TRUE, linesep = "", longtable = TRUE, caption = "Summary of Assessments Across Agencies (all assessments, all periods)") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>%
+  row_spec(27, bold = TRUE)
+```
+
+This table summarizes DESSA 40, K-8, and HSE assessments (including mini assessments). Over the 2021-2022 academic year, Partnership4Success curated the data for 26 agencies. During that time, 2,033 students have had 4,935 assessments by 129 different raters.
+
+\newpage
+<!-- ## Page 11 -->
+<!-- ## DESSA Competency Overview: Rating Periods 1 and 2 -->
+
+```{r include=FALSE, out.width='75%', warning=FALSE}
+# for period 1
+# EVERYONE here: (not just those in period 1 and 2 overlap)
+merged.dat.full2 = rbind(dat1[, common.cols], dat2[, common.cols], dat4[,common.cols])
+# nrow(merged.dat.full2) == nrow(dat1) + nrow(dat2) + nrow(dat4)
+# table(merged.dat.full2$RatingPeriodName == "2021-2022 SEL-C Rating Period 1")
+merged.dat.full2.p1 = filter(merged.dat.full2, merged.dat.full2$RatingPeriodName 
+                             %in% periods1and2[c(1,2)])
+
+# overall row will have SEC AND SET (from mini); all other rows will be SEC data only
+merged.dat.mini2 = rbind(dat3[, common.cols.mini], dat6[, common.cols.mini])
+merged.dat.mini2.p1 = filter(merged.dat.mini2, merged.dat.mini2$RatingPeriodName 
+                             %in% periods1and2[c(1,2)])
+
+competency = c("Personal Responsibility", "Self Awareness", "Self Management", 
+               "Goal Directed Behavior", "Optimistic Thinking", "Social Awareness", 
+               "Decision Making", "Relationship Skills", "Overall")
+
+pr.tab = table(merged.dat.full2.p1$PRDescription)
+sea.tab = table(merged.dat.full2.p1$SADescription)
+sm.tab = table(merged.dat.full2.p1$SMDescription)
+gb.tab = table(merged.dat.full2.p1$GBDescription)
+ot.tab = table(merged.dat.full2.p1$OTDescription)
+soa.tab = table(merged.dat.full2.p1$SODescription)
+dm.tab = table(merged.dat.full2.p1$DMDescription)
+rs.tab = table(merged.dat.full2.p1$RSDescription)
+overall.tab = table(merged.dat.full2.p1$SECDescription) + table(merged.dat.mini2.p1$SETDescription) # overall
+
+df1 = data.frame(competency)
+df1$N = as.vector(c(pr.tab["N"], sea.tab["N"], sm.tab["N"], gb.tab["N"], ot.tab["N"], soa.tab["N"], dm.tab["N"], rs.tab["N"], overall.tab["N"]))
+df1$`T` = as.vector(c(pr.tab["T"], sea.tab["T"], sm.tab["T"], gb.tab["T"], ot.tab["T"], soa.tab["T"], dm.tab["T"], rs.tab["T"], overall.tab["T"]))
+df1$S = as.vector(c(pr.tab["S"], sea.tab["S"], sm.tab["S"], gb.tab["S"], ot.tab["S"], soa.tab["S"], dm.tab["S"], rs.tab["S"], overall.tab["S"]))
+
+df1$Total = rowSums(df1[, c("N", "T", "S")])
+
+df1$`N (%)` = df1$N / df1$Total
+df1$`T (%)` = df1$`T` / df1$Total
+df1$`S (%)` = df1$`S` / df1$Total
+
+dat.for.stacked1 = data.frame(col1 = rep(c("Personal \n Responsibility", "Self \n Awareness", 
+               "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", 
+               "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", 
+               "Overall"), each=3), 
+               col2 = rep(c("c.Need", "b.Typical", "a.Strength"), 3), 
+               col3 = as.vector(unlist(c(df1[1, c(6:8)], df1[2, c(6:8)], df1[3, c(6:8)], df1[4, c(6:8)],
+                        df1[5, c(6:8)], df1[6, c(6:8)], df1[7, c(6:8)], df1[8, c(6:8)], df1[9, c(6:8)]))))
+colnames(dat.for.stacked1) = c("Competency", "Rating", "Percentage %") 
+dat.for.stacked1$Competency = factor(dat.for.stacked1$Competency, levels = rev(c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", "Overall")))
+
+dat.for.stacked1$`Percentage %` = percent(dat.for.stacked1$`Percentage %`, digits = 1)
+ggplot(dat.for.stacked1, 
+       aes(x=`Percentage %`, y=Competency, fill=Rating, label=`Percentage %`)) +
+  geom_bar(position="stack", stat="identity") + 
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("SEC/SET Ratings in SEL-C Period 1") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D")) +
+  scale_x_continuous(labels = scales::percent) +
+  xlab("")
+```
+
+```{r include=FALSE}
+# period 1
+mydf1 = df1
+colnames(df1) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+mydf1$`N (%)` = percent(mydf1$`N (%)` , digits = 2)
+mydf1$`T (%)` = percent(mydf1$`T (%)` , digits = 2)
+mydf1$`S (%)` = percent(mydf1$`S (%)` , digits = 2)
+
+mydf1$`N (%)` = cell_spec(mydf1$`N (%)`, color = ifelse(mydf1$`N (%)` < 0,
+                                                     "black", "black"))
+mydf1$`T (%)` = cell_spec(mydf1$`T (%)`, color = ifelse(mydf1$`T (%)` < 0,
+                                                     "black", "black"))
+mydf1$`S (%)` = cell_spec(mydf1$`S (%)`, color = ifelse(mydf1$`S (%)` < 0,
+                                                     "black", "black"))
+
+colnames(mydf1) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+kbl(mydf1, caption = "Period 1 Competency Ratings Breakdown", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+
+```
+
+```{r include=FALSE, out.width='75%', warning=FALSE}
+# period 2
+merged.dat.full2.p2 = filter(merged.dat.full2,
+                             merged.dat.full2$RatingPeriodName  %in% periods1and2[c(3,4)])
+
+# overall row will have SEC AND SET (from mini); all other rows will be SEC data only
+merged.dat.mini2.p2 = filter(merged.dat.mini2, merged.dat.mini2$RatingPeriodName  
+                             %in% periods1and2[c(3,4)])
+
+pr.tab = table(merged.dat.full2.p2$PRDescription)
+sea.tab = table(merged.dat.full2.p2$SADescription)
+sm.tab = table(merged.dat.full2.p2$SMDescription)
+gb.tab = table(merged.dat.full2.p2$GBDescription)
+ot.tab = table(merged.dat.full2.p2$OTDescription)
+soa.tab = table(merged.dat.full2.p2$SODescription)
+dm.tab = table(merged.dat.full2.p2$DMDescription)
+rs.tab = table(merged.dat.full2.p2$RSDescription)
+overall.tab = table(merged.dat.full2.p2$SECDescription) + table(merged.dat.mini2.p2$SETDescription) # overall
+
+
+df2 = data.frame(competency)
+df2$N = as.vector(c(pr.tab["N"], sea.tab["N"], sm.tab["N"], gb.tab["N"], ot.tab["N"], soa.tab["N"], dm.tab["N"], rs.tab["N"], overall.tab["N"]))
+df2$`T` = as.vector(c(pr.tab["T"], sea.tab["T"], sm.tab["T"], gb.tab["T"], ot.tab["T"], soa.tab["T"], dm.tab["T"], rs.tab["T"], overall.tab["T"]))
+df2$S = as.vector(c(pr.tab["S"], sea.tab["S"], sm.tab["S"], gb.tab["S"], ot.tab["S"], soa.tab["S"], dm.tab["S"], rs.tab["S"], overall.tab["S"]))
+
+df2$Total = rowSums(df2[, c("N", "T", "S")])
+
+df2$`N (%)` = df2$N / df2$Total
+df2$`T (%)` = df2$`T` / df2$Total
+df2$`S (%)` = df2$`S` / df2$Total
+
+dat.for.stacked2 = data.frame(col1 = rep(c("Personal \n Responsibility", "Self \n Awareness", 
+               "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", 
+               "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", 
+               "Overall"), each=3), 
+               col2 = rep(c("c.Need", "b.Typical", "a.Strength"), 3), 
+               col3 = as.vector(unlist(c(df2[1, c(6:8)], df2[2, c(6:8)], df2[3, c(6:8)], df2[4, c(6:8)],
+                        df2[5, c(6:8)], df2[6, c(6:8)], df2[7, c(6:8)], df2[8, c(6:8)], df2[9, c(6:8)]))))
+colnames(dat.for.stacked2) = c("Competency", "Rating", "Percentage %") 
+dat.for.stacked2$Competency = factor(dat.for.stacked2$Competency, levels = rev(c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", "Overall")))
+
+dat.for.stacked2$`Percentage %` = percent(dat.for.stacked2$`Percentage %`, digits = 1)
+ggplot(dat.for.stacked2, 
+       aes(x=`Percentage %`, y=Competency, fill=Rating, label=`Percentage %`)) +
+  geom_bar(position="stack", stat="identity") + 
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("SEC/SET Ratings in SEL-C Period 2") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D")) +
+  scale_x_continuous(labels = scales::percent) +
+  xlab("")
+```
+
+```{r include=FALSE}
+# period 2
+mydf2 = df2
+colnames(df2) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+mydf2$`N (%)` = percent(mydf2$`N (%)` , digits = 2)
+mydf2$`T (%)` = percent(mydf2$`T (%)` , digits = 2)
+mydf2$`S (%)` = percent(mydf2$`S (%)` , digits = 2)
+
+mydf2$`N (%)` = cell_spec(mydf2$`N (%)`, color = ifelse(mydf2$`N (%)` < 0,
+                                                     "black", "black"))
+mydf2$`T (%)` = cell_spec(mydf2$`T (%)`, color = ifelse(mydf2$`T (%)` < 0,
+                                                     "black", "black"))
+mydf2$`S (%)` = cell_spec(mydf2$`S (%)`, color = ifelse(mydf2$`S (%)` < 0,
+                                                     "black", "black"))
+
+colnames(mydf2) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+kbl(mydf2, caption = "Period 2 Competency Ratings Breakdown", booktabs = T, 
+    escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+```
+
+\newpage 
+<!-- ## Page 12 of ASN -->
+
+## II. DESSA Competency Overview: Rating Periods 1 and 2
+
+Full assessments provide ratings to nine competencies, including the overall SEC rating. Mini assessments provide a single overall SET rating. In the following table and graphic, the SEC and SET ratings are combined together as the Overall competency rating. All full and mini assessments are included.
+
+```{r echo=FALSE}
+df.diff = data.frame(matrix(ncol = 7, nrow = 9))
+colnames(df.diff) = c("Competency", "N", "T", "S", "N (p)", "T (p)", "S (p)")
+df.diff$Competency = df2[,1]
+df.diff$N = df2$N - df1$N
+df.diff$`T` = df2$`T` - df1$`T` 
+df.diff$S = df2$S - df1$S
+df.diff$`N (p)` = df2$`N (\\%)`- df1$`N (\\%)`
+df.diff$`T (p)` = df2$`T (\\%)`- df1$`T (\\%)`
+df.diff$`S (p)` = df2$`S (\\%)` - df1$`S (\\%)`
+
+colnames(df.diff) = c("Competency", "N", "T", "S", "N (\\%)", "T (\\%)", "S (\\%)")
+
+my.df.diff = df.diff
+
+my.df.diff$`N (\\%)` = percent(my.df.diff$`N (\\%)` , digits = 2)
+my.df.diff$`T (\\%)` = percent(my.df.diff$`T (\\%)` , digits = 2)
+my.df.diff$`S (\\%)` = percent(my.df.diff$`S (\\%)` , digits = 2)
+
+my.df.diff$`N (\\%)` = cell_spec(my.df.diff$`N (\\%)`, color = ifelse(my.df.diff$`N (\\%)` < 0,
+                                                     "black", "black"))
+my.df.diff$`T (\\%)` = cell_spec(my.df.diff$`T (\\%)`, color = ifelse(my.df.diff$`T (\\%)` < 0,
+                                                     "black", "black"))
+my.df.diff$`S (\\%)` = cell_spec(my.df.diff$`S (\\%)`, color = ifelse(my.df.diff$`S (\\%)` < 0,
+                                                     "black", "black"))
+colnames(my.df.diff) = c("Competency", "Need", "Typical", "Strength", "Need (\\%)", "Typical (\\%)", "Strength (\\%)")
+
+kbl(my.df.diff, caption = "Difference in Competency Ratings (Period 2 - Period 1)", 
+    booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header"))
+```
+
+```{r echo=FALSE, out.width='90%', warning=FALSE, fig.align='center'}
+# df.diff[, c(1, 5, 7)]
+df.diff2 = data.frame(matrix(ncol = 3, nrow = 18))
+colnames(df.diff2) = c("X1", "X2", "Rating")
+rownames(df.diff2) = c("N.pr", "S.pr", "N.selfA", "S.selfA", "N.selfM", "S.selfM",
+                           "N.gb", "S.gb", "N.ot", "S.ot", "N.socA", "S.socA", "N.dm", "S.dm", 
+                           "N.rs", "S.rs", "N.overall", "S.overall")
+
+df.diff2$X1 = as.numeric(c(df.diff[1,c(5,7)], df.diff[2,c(5,7)], df.diff[3,c(5,7)], df.diff[4,c(5,7)],
+                df.diff[5,c(5,7)], df.diff[6,c(5,7)], df.diff[7,c(5,7)], df.diff[8,c(5,7)], df.diff[9,c(5,7)]))
+df.diff2$X2 = rep(c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", 
+                                 "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", 
+                                 "Decision \n Making","Relationship \n Skills", "Overall"), each=2)
+df.diff2$Rating = rep(c("Need", "Strength"), 9)
+
+df.diff2$X2 = factor(df.diff2$X2, levels = c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", 
+                                 "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", 
+                                 "Decision \n Making","Relationship \n Skills", "Overall"))
+ggplot(df.diff2, aes(x = X2, y = X1, fill=Rating)) + 
+  geom_bar(stat = "identity", position = 'dodge', width=0.7) +
+  ylab("Change (Period 2 (%) - Period 1 (%))") +
+  xlab("Competency") +
+  theme(axis.text.x = element_text(hjust=0.5, size=5.5)) +
+  ggtitle("2021-2022 Change in DESSA Competency ratings") +
+  scale_fill_manual(values = rep(c("#F8766D", "#619CFF"),3)) +
+  scale_y_continuous(labels = scales::percent) +
+  geom_hline(yintercept = 0)
+```
+
+Comparing the 1161 full and 490 mini assessments that were completed in period 1 with the 1251 full and 549 mini assessments completed in period 2:
+\vspace{-0.4cm}
+  
+- Strength ratings decreased in every competency.
+- Typical ratings increased in every competency except Personal Responsibility and Social Awareness.
+- The Needs rating in Social Awareness increased the most of all competencies, rising 4.41%.
+- The Needs rating in Self Awareness decreased the most of all competencies, declining 2.09%.
+- Self Management had the highest percentage of students in the Need category for both periods.
+- Personal Responsibility had the lowest percentage of students in the Strength category for both periods.
+
+<!-- Page 3 of BTN -->
+## III. DESSA Overall Ratings
+Overall ratings consist of Social Emotional Composite (SEC) ratings from full assessments and Social Emotional Total (SET) ratings from mini assessments. Students with either SEC or SET ratings reported in both periods 1 and 2 are included below.
+
+```{r include=FALSE}
+merged.dat.full = rbind(dat1[, common.cols], dat2[, common.cols], dat4[,common.cols])
+# nrow(dat1) + nrow(dat2) + nrow(dat4) == nrow(merged.dat.full)
+merged.dat.mini = rbind(dat3[, common.cols.mini], dat6[, common.cols.mini])
+# nrow(dat3) + nrow(dat6) == nrow(merged.dat.mini)
+```
+
+```{r include=FALSE}
+merged.dat.full = filter(merged.dat.full, merged.dat.full$RatingPeriodName %in% periods1and2)
+merged.dat.mini = filter(merged.dat.mini, merged.dat.mini$RatingPeriodName %in% periods1and2)
+#
+period1_ids.full = merged.dat.full$StudentId[merged.dat.full$RatingPeriodName 
+                                             %in% periods1and2[c(1,2)]]
+period2_ids.full = merged.dat.full$StudentId[merged.dat.full$RatingPeriodName
+                                             %in% periods1and2[c(3,4)]]
+period1_ids.mini = merged.dat.mini$StudentId[merged.dat.mini$RatingPeriodName
+                                             %in% periods1and2[c(1,2)]]
+period2_ids.mini = merged.dat.mini$StudentId[merged.dat.mini$RatingPeriodName
+                                             %in% periods1and2[c(3,4)]]
+ids_withboth.full = intersect(period1_ids.full, period2_ids.full)
+ids_withboth.mini = intersect(period1_ids.mini, period2_ids.mini)
+
+merged.dat.full = filter(merged.dat.full, merged.dat.full$StudentId %in% ids_withboth.full)
+merged.dat.mini = filter(merged.dat.mini, merged.dat.mini$StudentId %in% ids_withboth.mini)
+# head(sort(table(merged.dat.full$StudentId), decreasing=T)) # all 2s like we want
+# head(sort(table(merged.dat.mini$StudentId), decreasing=T)) # the 3s we have to fix
+# DFYF500294, EPSEA4025493, GMGDA0072 repeated 3 times, have to drop some rows to get to 2s
+merged.dat.mini = merged.dat.mini[-c(282,11, 389), ]
+
+# all period 1s for all others were 2021 so DFYF500294's period 1 in 2021 is being used only:
+# View(merged.dat.mini[merged.dat.mini$RatingPeriodName == "2021-2022 SEL-C Rating Period 1", ])
+
+# dropped row 11 for ID:EPSEA4025493 since the second one was the "latest one"
+# View(merged.dat.mini[merged.dat.mini$RatingPeriodName == "2021-2022 High School Rating Period 1", ])
+
+# dropped row 389 because for ID:GMGDA0072 because it was SEL-C and the pair was HSR ratings
+# merged.dat.mini[c(21, 87, 389), ]
+
+# View(merged.dat.full)
+# View(merged.dat.mini)
+```
+
+```{r include=FALSE}
+# 379 unique IDs across all mini data (dat3, dat6)
+# 966 unique IDs across all full data (dat1, dat2, dat4)
+# length(unique(merged.dat.full$StudentId))
+# length(unique(merged.dat.mini$StudentId))
+# between (sel-c and hs) rating periods 1 and 2 data, 51 overlap
+# table(unique(merged.dat.mini$StudentId) %in% unique(merged.dat.full$StudentId))
+# table(unique(merged.dat.full$StudentId) %in% unique(merged.dat.mini$StudentId))
+```
+
+```{r include=FALSE}
+selc.hs.p1 = table(merged.dat.full$SECDescription[merged.dat.full$RatingPeriodName
+                                              %in% periods1and2[c(1,2)]]) + table(merged.dat.mini$SETDescription[merged.dat.mini$RatingPeriodName
+                                     %in% periods1and2[c(1,2)]])
+
+selc.hs.p2 = table(merged.dat.full$SECDescription[merged.dat.full$RatingPeriodName
+                                             %in% periods1and2[c(3,4)]]) + 
+  table(merged.dat.mini$SETDescription[merged.dat.mini$RatingPeriodName
+                                       %in% periods1and2[c(3,4)]])
+```
+
+```{r echo=FALSE, out.width='85%', warning=FALSE, fig.align='center'}
+col1 = c("P1.n", "P2.n", "P1.t", "P2.t", "P1.s", "P2.s")
+col2 = rep(c("c.Need", "b.Typical", "a.Strength"), each=2)
+col3 = c(selc.hs.p1["N"], selc.hs.p2["N"], selc.hs.p1["T"], selc.hs.p2["T"], selc.hs.p1["S"], selc.hs.p2["S"])
+dat.new = data.frame(col1, col2, col3)
+dat.new$col1 = factor(dat.new$col1, levels = c("P1.n", "P2.n", "P1.t", "P2.t", "P1.s", "P2.s")) 
+colnames(dat.new) = c("Rating Period", "Description", "Num_Ratings")
+# dat.new
+
+ggplot(dat.new, aes(x = `Rating Period`, y = Num_Ratings, fill=Description, label = Num_Ratings)) +
+  geom_bar(stat="identity") +
+  labs(title = "2021-2022 Overall Ratings by SEL-C Rating Period") +
+  xlab("Rating Period") +
+  ylab("Number of Ratings") +
+  geom_text(aes(label=Num_Ratings), vjust=-0.3, size=3.5) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D")) +
+  scale_x_discrete(limits = c("P1.n", "P2.n", "P1.t", "P2.t", "P1.s", "P2.s"),
+                   breaks = c("P1.n", "P2.n","P1.t", "P2.t", "P1.s", "P2.s"),
+                   labels = c("P1", "P2","P1", "P2", "P1", "P2"))
+```
+
+```{r echo=FALSE}
+Rating = c("Need", "Typical", "Strength")
+p1N = as.vector(c(selc.hs.p1["N"], selc.hs.p1["T"], selc.hs.p1["S"]))
+p2N = as.vector(c(selc.hs.p2["N"], selc.hs.p2["T"], selc.hs.p2["S"]))
+p1P = as.vector(c(selc.hs.p1["N"], selc.hs.p1["T"], selc.hs.p1["S"]))/
+                        sum(as.vector(c(selc.hs.p1["N"], selc.hs.p1["T"], selc.hs.p1["S"])))
+# p1P.percentage = percent(p1P, digits=2)
+# p2P.percentage = percent(p2P, digits=2)
+p2P = as.vector(c(selc.hs.p2["N"], selc.hs.p2["T"], selc.hs.p2["S"]))/
+                        sum(as.vector(c(selc.hs.p2["N"], selc.hs.p2["T"], selc.hs.p2["S"])))
+p1P = percent(p1P)
+p2P = percent(p2P)
+dat.for.table = data.frame(Rating, p1N, p2N, p1P, p2P)
+dat.for.table$change = percent(dat.for.table$p2P - dat.for.table$p1P, digits=2)
+dat.for.table2 = dat.for.table
+# dat.for.table$p1P = percent(dat.for.table$p1P, digits=2)
+# dat.for.table$p2P = percent(dat.for.table$p2P, digits=2)
+
+dat.for.table$change = cell_spec(dat.for.table$change, 
+                                      color = ifelse(dat.for.table$change < 0, 
+                                                     "black", "black"))
+dat.for.table$p1P = cell_spec(dat.for.table$p1P,
+                                      color = ifelse(dat.for.table$p1P < 0,
+                                                     "black", "black"))
+dat.for.table$p2P = cell_spec(dat.for.table$p2P,
+                                      color = ifelse(dat.for.table$p2P < 0,
+                                                     "black", "black"))
+                                                     
+# dat.for.table$Rating.P1..p. = percent(dat.for.table$Rating.P1..p., digits=2)
+
+colnames(dat.for.table) = c("Description", "Period 1", "Period 2", "Period 1 (\\%)",
+                             "Period 2 (\\%)", "Change")
+# dat.for.table[4] = c("Total", sum(dat.for.table$`Period 1`), sum(dat.for.table$`Period 2`), NA, NA)
+dat.for.table[4,] = c("Total", sum(as.numeric(dat.for.table$`Period 1`)), sum(as.numeric(dat.for.table$`Period 1`)), "", "", "")
+kbl(dat.for.table, caption = "2021-22 Overall Ratings in Periods 1 and 2",
+    booktabs = T, escape = F, align=c('l', rep('c', 5))) %>%
+  # kable_paper("striped", full_width = F) %>%
+  row_spec(4, bold = TRUE) %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+Of the 1,345 youth who were assessed in both the 1st and 2nd periods:
+ \vspace{-0.4cm}
+ 
+- The percentage of students in the Need category remained the same.
+- The percentage of students in the Typical category increased 2.9%.
+- The percentage of students in the Strength category decreased 2.9%

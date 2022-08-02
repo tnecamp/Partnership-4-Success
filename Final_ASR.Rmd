@@ -1,0 +1,1685 @@
+---
+title: |
+  \vspace{-30pt}
+  <center> **2021-2022 Annual Summary Report** </center>
+subtitle: <center> **Partnership4Success (P4S) – Academic Year** </center>
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{fancyhdr} \usepackage{caption}
+geometry: right=0.75in, left=0.75in, top=0.75in
+---
+\addtolength{\headheight}{50pt}
+\pagestyle{fancyplain}
+\lhead{\includegraphics[height=1.3cm]{P4Slogo.jpg}}
+\renewcommand{\headrulewidth}{0pt}
+\captionsetup[table]{labelformat=empty}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE) 
+# margin=1.0in
+```
+
+```{r include=FALSE, warning=FALSE}
+# % make more space for the header
+# % use fancy for all pages except chapter start
+# % right logo
+# % remove rule below header
+# % get rid of automatic captions (and the table 1, 2 numbering)
+library(ggplot2)
+library(kableExtra)
+library(tidyverse)
+library(gridExtra)
+library(scales)
+# library(pagedown)
+library(data.table)
+library(dplyr)
+library(formattable)
+library(tidyr)
+library(htmltools)
+library(webshot)
+library(flextable)
+# webshot::install_phantomjs()
+```
+
+```{r include=FALSE}
+dat1 = read.csv("DESSA 40 Partnership4Success - 6_7_2022.csv")
+dat2 = read.csv("DESSA K-8 Partnership4Success - 6_7_2022.csv")
+dat3 = read.csv("DESSA-HSE mini Partnership4Success - 6_7_2022.csv")
+dat4 = read.csv("DESSA-HSE Partnership4Success - 6_7_2022.csv")
+dat5 = read.csv("DESSA-HSE Student Self Report Partnership4Success - 6_7_2022.csv")
+dat6 = read.csv("DESSA-mini K-8 All Forms Partnership4Success - 6_7_2022.csv")
+```
+
+## Page 3
+
+## DESSA Demographics: Gender Breakdown
+
+```{r include=FALSE}
+# get site name/rating period name/rating date from both mini & full sized data -> merge into 1 df
+merged.dat1 = rbind(dat1[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating",
+            "AgeAtRatingMonths", "SECDescription", "GradeAtRating", "AgeAtRating", "StudentId")],
+                    dat2[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating",
+            "AgeAtRatingMonths", "SECDescription", "GradeAtRating", "AgeAtRating", "StudentId")],
+                    dat4[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating",
+            "AgeAtRatingMonths", "SECDescription", "GradeAtRating", "AgeAtRating", "StudentId")])
+merged.dat2 = rbind(dat3[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating",
+            "AgeAtRatingMonths", "SETDescription", "GradeAtRating", "AgeAtRating", "StudentId")],
+                    dat6[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating",
+            "AgeAtRatingMonths", "SETDescription", "GradeAtRating", "AgeAtRating", "StudentId")])
+merged.dat1$Description = merged.dat1$SECDescription
+merged.dat2$Description = merged.dat2$SETDescription
+merged.dat = rbind(merged.dat1[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating", "Description", "AgeAtRating", "AgeAtRatingMonths")],
+                   merged.dat2[, c("SiteName", "RatingPeriodName", "StudentGender", "GradeAtRating", "Description", "AgeAtRating", "AgeAtRatingMonths")])
+# table(merged.dat$RatingPeriodName)
+merged.dat = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                           c("2021-2022 High School Rating Period 1",
+                             "2021-2022 High School Rating Period 2", 
+                             "2021-2022 High School Rating Period 3",
+                             "2021-2022 SEL-C Rating Period 1",
+                             "2021-2022 SEL-C Rating Period 2",
+                             "2021-2022 SEL-C Rating Period 3"))
+# checks
+# nrow(dat1) + nrow(dat2) + nrow(dat4) == nrow(merged.dat1)
+# nrow(dat3) + nrow(dat6) == nrow(merged.dat2)
+# table(merged.dat1$score == merged.dat1$SECDescription)
+# table(merged.dat2$score == merged.dat2$SETDescription)
+p1.Need = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                      merged.dat$Description=="N")$StudentGender)
+p1.Tyipcal = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                      merged.dat$Description=="T")$StudentGender)
+p1.Strength = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                      merged.dat$Description=="S")$StudentGender)
+
+p2.Need = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                      merged.dat$Description=="N")$StudentGender)
+p2.Tyipcal = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                      merged.dat$Description=="T")$StudentGender)
+p2.Strength = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                      merged.dat$Description=="S")$StudentGender)
+
+p3.Need = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                      merged.dat$Description=="N")$StudentGender)
+p3.Tyipcal = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                      merged.dat$Description=="T")$StudentGender)
+p3.Strength = table(filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                    c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                      merged.dat$Description=="S")$StudentGender)
+```
+
+```{r include=FALSE}
+p1f = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$StudentGender == "F"); np1f = nrow(p1f)
+p1m = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$StudentGender == "M"); np1m = nrow(p1m)
+p2f = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$StudentGender == "F"); np2f = nrow(p2f)
+p2m = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$StudentGender == "M"); np2m = nrow(p2m)
+p3f = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$StudentGender == "F"); np3f = nrow(p3f)
+p3m = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$StudentGender == "M"); np3m = nrow(p3m)
+
+p1f = table(p1f$Description)
+p1m = table(p1m$Description)
+
+p2f = table(p2f$Description)
+p2m = table(p2m$Description)
+
+p3f = table(p3f$Description)
+p3m = table(p3m$Description)
+```
+
+```{r echo=FALSE, out.width='100%', warning=FALSE}
+`Rating Period / Gender` = c(rep("P1 / F" , 3), rep("P1 / M" , 3), rep("P2 / F" , 3),
+                                       rep("P2 / M" , 3), rep("P3 / F" , 3), rep("P3 / M" , 3))
+Description = c(rep(c("c.Need", "b.Typical", "a.Strength"), 6))
+`Number of Ratings` = as.vector(c(p1f["N"], p1f["T"], p1f["S"], p1m["N"], p1m["T"], p1m["S"],
+                                  p2f["N"], p2f["T"], p2f["S"], p2m["N"], p2m["T"], p2m["S"],
+                                  p3f["N"], p3f["T"], p3f["S"], p3m["N"], p3m["T"], p3m["S"]))
+
+dat.for.stacked = data.frame(`Rating Period / Gender`, Description, `Number of Ratings`)
+# dat.for.stacked
+
+# Stacked
+ggplot(dat.for.stacked, 
+  aes(x=`Rating Period / Gender`, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  # geom_bar(position="stack", stat="identity") + 
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("2021-2022 SEC/SET Ratings by Gender") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+
+# verify with df that stacked plot is correct
+# View(dat.for.stacked)
+```
+
+```{r echo=FALSE}
+curdat = data.frame(matrix(ncol = 5))
+colnames(curdat) = c("2021-2022 Academic Year", "Female", "Male", "Non-Binary", "Unspecified")
+curdat[1,] =  c("Rating Period 1", 
+                c(p1.Need["F"]+p1.Tyipcal["F"]+p1.Strength["F"]), 
+                c(p1.Need["M"]+p1.Tyipcal["M"]+p1.Strength["M"]), 
+                sum(c(p1.Need["N"],p1.Tyipcal["N"],p1.Strength["N"]), na.rm = T),
+                sum(c(p1.Need["U"],p1.Tyipcal["U"],p1.Strength["U"]), na.rm = T))
+
+curdat[2,] = c("Need", c(p1.Need["F"], p1.Need["M"], p1.Need["N"], p1.Need["U"]))
+curdat[3,] = c("Typical", c(p1.Tyipcal["F"], p1.Tyipcal["M"], p1.Tyipcal["N"], p1.Tyipcal["U"]))
+curdat[4,] = c("Strength", c(p1.Strength["F"], p1.Strength["M"], p1.Strength["N"], p1.Strength["U"]))
+
+curdat[5,] =  c("Rating Period 2", 
+                c(p2.Need["F"]+p2.Tyipcal["F"]+p2.Strength["F"]), 
+                c(p2.Need["M"]+p2.Tyipcal["M"]+p2.Strength["M"]), 
+                sum(c(p2.Need["N"],p2.Tyipcal["N"],p2.Strength["N"]), na.rm = T),
+                sum(c(p2.Need["N"],p2.Tyipcal["N"],p2.Strength["N"]), na.rm = T))
+
+curdat[6,] = c("Need", c(p2.Need["F"], p2.Need["M"], p2.Need["N"], p2.Need["U"]))
+curdat[7,] = c("Typical", c(p2.Tyipcal["F"], p2.Tyipcal["M"], p2.Tyipcal["N"], p2.Tyipcal["U"]))
+curdat[8,] = c("Strength", c(p2.Strength["F"], p2.Strength["M"], p2.Strength["N"], p2.Strength["U"]))
+
+curdat[9,] =  c("Rating Period 3", 
+                c(p3.Need["F"]+p3.Tyipcal["F"]+p3.Strength["F"]), 
+                c(p3.Need["M"]+p3.Tyipcal["M"]+p3.Strength["M"]), 
+                sum(c(p3.Need["N"],p3.Tyipcal["N"],p3.Strength["N"]), na.rm = T),
+                sum(c(p3.Need["N"],p3.Tyipcal["N"],p3.Strength["N"]), na.rm = T))
+
+curdat[10,] = c("Need", c(p3.Need["F"], p3.Need["M"], p3.Need["N"], p3.Need["U"]))
+curdat[11,] = c("Typical", c(p3.Tyipcal["F"], p3.Tyipcal["M"], p3.Tyipcal["N"], p3.Tyipcal["U"]))
+curdat[12,] = c("Strength", c(p3.Strength["F"], p3.Strength["M"], p3.Strength["N"], p3.Strength["U"]))
+
+curdat[is.na(curdat)] = 0
+
+curdat = curdat %>% mutate_at(c('Female', 'Male', 'Non-Binary', 'Unspecified'), as.numeric)
+
+curdat[13,] = c("Total", sum(curdat$Female), sum(curdat$Male), 
+                sum(curdat$`Non-Binary`), sum(curdat$Unspecified))
+
+curdat = curdat %>% mutate_at(c('Female', 'Male', 'Non-Binary', 'Unspecified'), as.numeric)
+
+curdat$Total = curdat$Female + curdat$Male + curdat$`Non-Binary` + curdat$Unspecified
+
+# set_flextable_defaults(
+#   font.size = 8, theme_fun = theme_booktabs,
+#   fonts_ignore=TRUE,
+#   padding = 4) # , background.color = "#FAFAFA"
+
+kbl(curdat, caption = "Gender Breakdown (Count)", booktabs = T, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(1,5,9, 13), bold = T)
+
+# kbl(dt, booktabs = T) %>%
+# kable_styling("striped", full_width = F) %>%
+# column_spec(7, border_left = T, bold = T) %>%
+# row_spec(1, strikeout = T) %>%
+# row_spec(3:5, bold = T, color = "white", background = "black")
+```
+
+```{r echo=FALSE}
+curdat2 = data.frame(matrix(ncol = 4))
+colnames(curdat2) = c("2021-2022 Rating Period", "Need", "Typical", "Strength")
+curdat2[1,] = c("Period 1", curdat[2,6]/curdat[1,6], curdat[3,6]/curdat[1,6], curdat[4,6]/curdat[1,6])
+curdat2[2,] = c("Female", curdat[2,2]/curdat[1,2], curdat[3,2]/curdat[1,2], curdat[4,2]/curdat[1,2])
+curdat2[3,] = c("Male", curdat[2,3]/curdat[1,3], curdat[3,3]/curdat[1,2], curdat[4,3]/curdat[1,2])
+
+curdat2[4,] = c("Rating Period 2", curdat[6,6]/curdat[5,6], curdat[7,6]/curdat[5,6], curdat[8,6]/curdat[5,6])
+curdat2[5,] = c("Female", curdat[6,2]/curdat[5,2], curdat[7,2]/curdat[5,2], curdat[8,2]/curdat[5,2])
+curdat2[6,] = c("Male", curdat[6,3]/curdat[5,3], curdat[7,3]/curdat[5,3], curdat[8,3]/curdat[5,3])
+
+curdat2[7,] = c("Period 3", curdat[10,6]/curdat[9,6], curdat[11,6]/curdat[9,6], curdat[12,6]/curdat[9,6])
+curdat2[8,] = c("Female", curdat[10,2]/curdat[9,2], curdat[11,2]/curdat[9,2], curdat[12,2]/curdat[9,2])
+curdat2[9,] = c("Female", curdat[10,3]/curdat[9,3], curdat[11,2]/curdat[9,3], curdat[12,3]/curdat[9,3])
+
+curdat2$Need = percent(curdat2$Need , digits = 2)
+curdat2$Typical = percent(curdat2$Typical , digits = 2)
+curdat2$Strength = percent(curdat2$Strength , digits = 2)
+
+curdat2$Need = cell_spec(curdat2$Need, color = ifelse(curdat2$Need < 0, 
+                                                     "black", "black"))
+curdat2$Typical = cell_spec(curdat2$Typical, color = ifelse(curdat2$Typical < 0, 
+                                                     "black", "black"))
+curdat2$Strength = cell_spec(curdat2$Strength, color = ifelse(curdat2$Strength < 0, 
+                                                     "black", "black"))
+
+kbl(curdat2, caption = "Gender Breakdown (Percentage)", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(1,4,7), bold = T) 
+```
+
+## Page 4 and 5
+```{r include=FALSE}
+# for period 1 only
+p1.k = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "Kindergarten")
+
+p1.1 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "1st Grade")
+p1.2 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "2nd Grade")
+p1.3 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "3rd Grade")
+p1.4 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "4th Grade")
+p1.5 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "5th Grade")
+p1.6 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "6th Grade")
+p1.7 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "7th Grade")
+p1.8 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "8th Grade")
+
+p1.9 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "9th Grade")
+p1.10 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "10th Grade")
+p1.11 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "11th Grade")
+p1.12 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "12th Grade")
+p1.u = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 1",  
+                                                            "2021-2022 SEL-C Rating Period 1") &
+               merged.dat$GradeAtRating == "Unspecified")
+
+p1.k = table(p1.k$Description); p1.1 = table(p1.1$Description); p1.2 = table(p1.2$Description)
+p1.3 = table(p1.3$Description); p1.4 = table(p1.4$Description); p1.5 = table(p1.5$Description)
+p1.6 = table(p1.6$Description); p1.7 = table(p1.7$Description); p1.8 = table(p1.8$Description)
+p1.9 = table(p1.9$Description); p1.10 = table(p1.10$Description); p1.11 = table(p1.11$Description)
+p1.12 = table(p1.12$Description); p1.u = table(p1.u$Description)
+```
+
+```{r include=FALSE}
+# table(merged.dat$GradeAtRating)
+# `Grade` = c(rep("Kindergarten", 3), rep("1st Grade", 3), rep("2nd Grade", 3),
+#                             rep("3rd Grade", 3), rep("4th Grade", 3), rep("5th Grade", 3), 
+#                             rep("6th Grade", 3), rep("7th Grade", 3), rep("8th Grade", 3), 
+#                             rep("9th Grade", 3), rep("10th Grade", 3), rep("11th Grade", 3), 
+#                             rep("12th Grade", 3), rep("Unspecified", 3))
+
+Grade = c(rep("K", 3), rep("1st", 3), rep("2nd", 3), rep("3rd", 3), 
+            rep("4th", 3), rep("5th", 3), rep("6th", 3), rep("7th", 3),
+            rep("8th", 3), rep("9th", 3), rep("10th", 3), rep("11th", 3), 
+            rep("12th", 3))
+
+Description = c(rep(c("c.Need", "b.Typical", "a.Strength"), 13))
+# p1.k p1.1 p1.2 p1.3... p1.12, p1.u
+`Number of Ratings` = as.vector(c(p1.k["N"], p1.k["T"], p1.k["S"], 
+                                  p1.1["N"], p1.1["T"], p1.1["S"],
+                                  p1.2["N"], p1.2["T"], p1.2["S"],
+                                  p1.3["N"], p1.3["T"], p1.3["S"],
+                                  p1.4["N"], p1.4["T"], p1.4["S"],
+                                  p1.5["N"], p1.5["T"], p1.5["S"],
+                                  p1.6["N"], p1.6["T"], p1.6["S"],
+                                  p1.7["N"], p1.7["T"], p1.7["S"],
+                                  p1.8["N"], p1.8["T"], p1.8["S"],
+                                  p1.9["N"], p1.9["T"], p1.9["S"],
+                                  p1.10["N"], p1.10["T"], p1.10["S"],
+                                  p1.11["N"], p1.11["T"], p1.11["S"],
+                                  p1.12["N"], p1.12["T"], p1.12["S"]))
+
+dat.for.stacked1 = data.frame(Grade, Description, `Number of Ratings`)
+
+# dat.for.stacked
+```
+
+```{r echo=FALSE, warning = FALSE, out.width='75%'}
+# define factors so bar plot's bars in correct order 
+dat.for.stacked1$Grade = factor(dat.for.stacked1$Grade, 
+                               levels = c("K", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th",
+                                          "8th", "9th", "10th", "11th", "12th"))
+# Stacked
+firstone = ggplot(dat.for.stacked1, 
+  aes(x=Grade, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  geom_col(width = 0.5) +
+  geom_text(size = 1.8, position = position_stack(vjust = 0.5)) +
+  ggtitle("Period 1: 2021-2022 SEC/SET Ratings by Grade") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+firstone
+# verify with df that stacked plot is correct
+# View(dat.for.stacked1)
+```
+
+```{r echo=FALSE}
+# period 1 table
+# dat.for.stacked1
+no.ratings.sum = (dat.for.stacked1 %>%
+                    group_by(Grade) %>%
+                    summarize(no.ratings.sum = sum(Number.of.Ratings, na.rm = TRUE)))$no.ratings.sum
+dat.for.stacked1$no.ratings.sum = rep(no.ratings.sum, each=3)
+allnumbers = dat.for.stacked1$Number.of.Ratings
+allpercentages = dat.for.stacked1$Number.of.Ratings/dat.for.stacked1$no.ratings.sum
+
+p1.need.sum = as.numeric(dat.for.stacked1 %>% filter(Description == "c.Need") %>% 
+                           summarize(p1.n.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p1.typ.sum = as.numeric(dat.for.stacked1 %>% filter(Description == "b.Typical") %>% 
+                           summarize(p1.t.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p1.stren.sum = as.numeric(dat.for.stacked1 %>% filter(Description == "a.Strength") %>% 
+                           summarize(p1.s.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p1.nts.sum = p1.need.sum + p1.typ.sum + p1.stren.sum
+
+curdat1 = data.frame(matrix(ncol = 4))
+colnames(curdat1) = c("2021-2022 Academic Year", "Need", "Typical", "Strength")
+curdat1[1,] = c("Rating Period 1", p1.need.sum, p1.typ.sum, p1.stren.sum)
+curdat1[2,] = c("Kindergarten", allnumbers[1:3])
+curdat1[3,] = c("1st Grade", allnumbers[4:6])
+curdat1[4,] = c("2nd Grade", allnumbers[7:9])
+curdat1[5,] = c("3rd Grade", allnumbers[10:12])
+curdat1[6,] = c("4th Grade", allnumbers[13:15])
+curdat1[7,] = c("5th Grade", allnumbers[16:18])
+curdat1[8,] = c("6th Grade", allnumbers[19:21])
+curdat1[9,] = c("7th Grade", allnumbers[22:24])
+curdat1[10,] = c("8th Grade", allnumbers[25:27])
+curdat1[11,] = c("9th Grade", allnumbers[28:30])
+curdat1[12,] = c("10th Grade", allnumbers[31:33])
+curdat1[13,] = c("11th Grade", allnumbers[34:36])
+curdat1[14,] = c("12th Grade", allnumbers[37:39])
+curdat1[15,] = c("Undecided", as.numeric(c(p1.u["N"], p1.u["T"],p1.u["S"])))
+curdat1[is.na(curdat1)] = 0
+curdat1 = curdat1 %>% mutate_at(c('Need', 'Typical', 'Strength'), as.numeric)
+curdat1$Total = curdat1$Need + curdat1$Typical + curdat1$Strength
+
+# kbl(curdat1, caption = "caption", booktabs = T, escape = F) %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) # numbers
+
+curdat2 = curdat1[1:14, ]
+curdat2$Need = curdat2$Need/curdat2$Total
+curdat2$Typical = curdat2$Typical/curdat2$Total
+curdat2$Strength = curdat2$Strength/curdat2$Total
+curdat2 = curdat2[, 1:4]
+  
+# kbl(curdat2, caption = "caption", booktabs = T, escape = F) %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) # percentages
+```
+
+
+```{r include=FALSE}
+# for period 2 only
+p2.k = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "Kindergarten")
+
+p2.1 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "1st Grade")
+p2.2 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "2nd Grade")
+p2.3 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "3rd Grade")
+p2.4 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "4th Grade")
+p2.5 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "5th Grade")
+p2.6 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "6th Grade")
+p2.7 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "7th Grade")
+p2.8 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "8th Grade")
+
+p2.9 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "9th Grade")
+p2.10 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "10th Grade")
+p2.11 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "11th Grade")
+p2.12 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "12th Grade")
+p2.u = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 2",  
+                                                            "2021-2022 SEL-C Rating Period 2") &
+               merged.dat$GradeAtRating == "Unspecified")
+
+p2.k = table(p2.k$Description); p2.1 = table(p2.1$Description); p2.2 = table(p2.2$Description)
+p2.3 = table(p2.3$Description); p2.4 = table(p2.4$Description); p2.5 = table(p2.5$Description)
+p2.6 = table(p2.6$Description); p2.7 = table(p2.7$Description); p2.8 = table(p2.8$Description)
+p2.9 = table(p2.9$Description); p2.10 = table(p2.10$Description); p2.11 = table(p2.11$Description)
+p2.12 = table(p2.12$Description); p2.u = table(p2.u$Description)
+```
+
+```{r include=FALSE}
+Grade = c(rep("K", 3), rep("1st", 3), rep("2nd", 3), rep("3rd", 3), 
+            rep("4th", 3), rep("5th", 3), rep("6th", 3), rep("7th", 3),
+            rep("8th", 3), rep("9th", 3), rep("10th", 3), rep("11th", 3), 
+            rep("12th", 3))
+
+Description = c(rep(c("c.Need", "b.Typical", "a.Strength"), 13))
+# p2.k p2.1 p2.2 p2.3... p2.12, p2.u
+`Number of Ratings` = as.vector(c(p2.k["N"], p2.k["T"], p2.k["S"], 
+                                  p2.1["N"], p2.1["T"], p2.1["S"],
+                                  p2.2["N"], p2.2["T"], p2.2["S"],
+                                  p2.3["N"], p2.3["T"], p2.3["S"],
+                                  p2.4["N"], p2.4["T"], p2.4["S"],
+                                  p2.5["N"], p2.5["T"], p2.5["S"],
+                                  p2.6["N"], p2.6["T"], p2.6["S"],
+                                  p2.7["N"], p2.7["T"], p2.7["S"],
+                                  p2.8["N"], p2.8["T"], p2.8["S"],
+                                  p2.9["N"], p2.9["T"], p2.9["S"],
+                                  p2.10["N"], p2.10["T"], p2.10["S"],
+                                  p2.11["N"], p2.11["T"], p2.11["S"],
+                                  p2.12["N"], p2.12["T"], p2.12["S"]))
+
+dat.for.stacked2 = data.frame(Grade, Description, `Number of Ratings`)
+# dat.for.stacked2
+```
+
+```{r echo=FALSE, warning = FALSE, out.width='75%'}
+# Stacked
+dat.for.stacked2$Grade = factor(dat.for.stacked2$Grade, 
+                               levels = c("K", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th",
+                                          "8th", "9th", "10th", "11th", "12th"))
+secondone = ggplot(dat.for.stacked2, 
+  aes(x=Grade, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  geom_col(width = 0.5) +
+  geom_text(size = 1.8, position = position_stack(vjust = 0.5)) +
+  ggtitle("Period 2: 2021-2022 SEC/SET Ratings by Grade") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+secondone
+# verify with df that stacked plot is correct
+# View(dat.for.stacked2)
+```
+
+```{r echo=FALSE}
+# period 2 table
+# dat.for.stacked2
+no.ratings.sum = (dat.for.stacked2 %>%
+                    group_by(Grade) %>%
+                    summarize(no.ratings.sum = sum(Number.of.Ratings, na.rm = TRUE)))$no.ratings.sum
+dat.for.stacked2$no.ratings.sum = rep(no.ratings.sum, each=3)
+allnumbers = dat.for.stacked2$Number.of.Ratings
+allpercentages = dat.for.stacked2$Number.of.Ratings/dat.for.stacked2$no.ratings.sum
+
+p2.need.sum = as.numeric(dat.for.stacked2 %>% filter(Description == "c.Need") %>% 
+                           summarize(p2.n.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p2.typ.sum = as.numeric(dat.for.stacked2 %>% filter(Description == "b.Typical") %>% 
+                           summarize(p2.t.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p2.stren.sum = as.numeric(dat.for.stacked2 %>% filter(Description == "a.Strength") %>% 
+                           summarize(p2.s.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p2.nts.sum = p2.need.sum + p2.typ.sum + p2.stren.sum
+
+curdat3 = data.frame(matrix(ncol = 4))
+colnames(curdat3) = c("2021-2022 Academic Year", "Need", "Typical", "Strength")
+curdat3[1,] = c("Rating Period 2", p2.need.sum, p2.typ.sum, p2.stren.sum)
+curdat3[2,] = c("Kindergarten", allnumbers[1:3])
+curdat3[3,] = c("1st Grade", allnumbers[4:6])
+curdat3[4,] = c("2nd Grade", allnumbers[7:9])
+curdat3[5,] = c("3rd Grade", allnumbers[10:12])
+curdat3[6,] = c("4th Grade", allnumbers[13:15])
+curdat3[7,] = c("5th Grade", allnumbers[16:18])
+curdat3[8,] = c("6th Grade", allnumbers[19:21])
+curdat3[9,] = c("7th Grade", allnumbers[22:24])
+curdat3[10,] = c("8th Grade", allnumbers[25:27])
+curdat3[11,] = c("9th Grade", allnumbers[28:30])
+curdat3[12,] = c("10th Grade", allnumbers[31:33])
+curdat3[13,] = c("11th Grade", allnumbers[34:36])
+curdat3[14,] = c("12th Grade", allnumbers[37:39])
+curdat3[15,] = c("Undecided", as.numeric(c(p2.u["N"], p2.u["T"], p2.u["S"])))
+curdat3[is.na(curdat3)] = 0
+curdat3 = curdat3 %>% mutate_at(c('Need', 'Typical', 'Strength'), as.numeric)
+curdat3$Total = curdat3$Need + curdat3$Typical + curdat3$Strength
+
+# kbl(curdat3, caption = "caption", booktabs = T, escape = F) %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) # numbers 
+
+curdat4 = curdat3[1:14, ]
+curdat4$Need = curdat4$Need/curdat4$Total
+curdat4$Typical = curdat4$Typical/curdat4$Total
+curdat4$Strength = curdat4$Strength/curdat4$Total
+curdat4 = curdat4[, 1:4]
+
+# kbl(curdat4, caption = "caption", booktabs = T, escape = F) %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) # percentages
+
+```
+
+
+```{r include=FALSE}
+# for period 3 only
+p3.k = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "Kindergarten")
+
+p3.1 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "1st Grade")
+p3.2 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "2nd Grade")
+p3.3 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "3rd Grade")
+p3.4 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "4th Grade")
+p3.5 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "5th Grade")
+p3.6 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "6th Grade")
+p3.7 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "7th Grade")
+p3.8 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "8th Grade")
+
+p3.9 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "9th Grade")
+p3.10 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "10th Grade")
+p3.11 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "11th Grade")
+p3.12 = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "12th Grade")
+p3.u = filter(merged.dat, merged.dat$RatingPeriodName %in% c("2021-2022 High School Rating Period 3",  
+                                                            "2021-2022 SEL-C Rating Period 3") &
+               merged.dat$GradeAtRating == "Unspecified")
+
+p3.k = table(p3.k$Description); p3.1 = table(p3.1$Description); p3.2 = table(p3.2$Description)
+p3.3 = table(p3.3$Description); p3.4 = table(p3.4$Description); p3.5 = table(p3.5$Description)
+p3.6 = table(p3.6$Description); p3.7 = table(p3.7$Description); p3.8 = table(p3.8$Description)
+p3.9 = table(p3.9$Description); p3.10 = table(p3.10$Description); p3.11 = table(p3.11$Description)
+p3.12 = table(p3.12$Description); p3.u = table(p3.u$Description)
+```
+
+```{r include=FALSE}
+Grade = c(rep("K", 3), rep("1st", 3), rep("2nd", 3), rep("3rd", 3), 
+            rep("4th", 3), rep("5th", 3), rep("6th", 3), rep("7th", 3),
+            rep("8th", 3), rep("9th", 3), rep("10th", 3), rep("11th", 3), 
+            rep("12th", 3))
+
+Description = c(rep(c("c.Need", "b.Typical", "a.Strength"), 13))
+# p3.k p3.1 p3.2 p3.3... p3.12, p3.u
+`Number of Ratings` = as.vector(c(p3.k["N"], p3.k["T"], p3.k["S"], 
+                                  p3.1["N"], p3.1["T"], p3.1["S"],
+                                  p3.2["N"], p3.2["T"], p3.2["S"],
+                                  p3.3["N"], p3.3["T"], p3.3["S"],
+                                  p3.4["N"], p3.4["T"], p3.4["S"],
+                                  p3.5["N"], p3.5["T"], p3.5["S"],
+                                  p3.6["N"], p3.6["T"], p3.6["S"],
+                                  p3.7["N"], p3.7["T"], p3.7["S"],
+                                  p3.8["N"], p3.8["T"], p3.8["S"],
+                                  p3.9["N"], p3.9["T"], p3.9["S"],
+                                  p3.10["N"], p3.10["T"], p3.10["S"],
+                                  p3.11["N"], p3.11["T"], p3.11["S"],
+                                  p3.12["N"], p3.12["T"], p3.12["S"]))
+
+dat.for.stacked3 = data.frame(Grade, Description, `Number of Ratings`)
+# dat.for.stacked
+```
+
+```{r echo=FALSE, warning = FALSE, out.width='75%'}
+dat.for.stacked3$Grade = factor(dat.for.stacked3$Grade, 
+                               levels = c("K", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th",
+                                          "8th", "9th", "10th", "11th", "12th"))
+dat.for.stacked3$Grade = factor(dat.for.stacked3$Grade, 
+                               levels = c("K", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th",
+                                          "8th", "9th", "10th", "11th", "12th"))
+# Stacked
+thirdone = ggplot(dat.for.stacked3, 
+  aes(x=Grade, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  geom_col(width = 0.5) +
+  geom_text(size = 1.8, position = position_stack(vjust = 0.5)) +
+  ggtitle("Period 3: 2021-2022 SEC/SET Ratings by Grade") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+thirdone
+# verify with df that stacked plot is correct
+# View(dat.for.stacked3)
+```
+
+```{r echo=FALSE}
+# period 3 table
+# dat.for.stacked3
+no.ratings.sum = (dat.for.stacked3 %>%
+                    group_by(Grade) %>%
+                    summarize(no.ratings.sum = sum(Number.of.Ratings, na.rm = TRUE)))$no.ratings.sum
+dat.for.stacked3$no.ratings.sum = rep(no.ratings.sum, each=3)
+allnumbers = dat.for.stacked3$Number.of.Ratings
+allpercentages = dat.for.stacked3$Number.of.Ratings/dat.for.stacked3$no.ratings.sum
+
+p3.need.sum = as.numeric(dat.for.stacked3 %>% filter(Description == "c.Need") %>% 
+                           summarize(p3.n.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p3.typ.sum = as.numeric(dat.for.stacked3 %>% filter(Description == "b.Typical") %>% 
+                           summarize(p3.t.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p3.stren.sum = as.numeric(dat.for.stacked3 %>% filter(Description == "a.Strength") %>% 
+                           summarize(p3.s.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p3.nts.sum = p3.need.sum + p3.typ.sum + p3.stren.sum
+
+curdat5 = data.frame(matrix(ncol = 4))
+colnames(curdat5) = c("2021-2022 Academic Year", "Need", "Typical", "Strength")
+curdat5[1,] = c("Rating Period 3", p3.need.sum, p3.typ.sum, p3.stren.sum)
+curdat5[2,] = c("Kindergarten", allnumbers[1:3])
+curdat5[3,] = c("1st Grade", allnumbers[4:6])
+curdat5[4,] = c("2nd Grade", allnumbers[7:9])
+curdat5[5,] = c("3rd Grade", allnumbers[10:12])
+curdat5[6,] = c("4th Grade", allnumbers[13:15])
+curdat5[7,] = c("5th Grade", allnumbers[16:18])
+curdat5[8,] = c("6th Grade", allnumbers[19:21])
+curdat5[9,] = c("7th Grade", allnumbers[22:24])
+curdat5[10,] = c("8th Grade", allnumbers[25:27])
+curdat5[11,] = c("9th Grade", allnumbers[28:30])
+curdat5[12,] = c("10th Grade", allnumbers[31:33])
+curdat5[13,] = c("11th Grade", allnumbers[34:36])
+curdat5[14,] = c("12th Grade", allnumbers[37:39])
+curdat5[15,] = c("Undecided", as.numeric(c(p3.u["N"], p3.u["T"], p3.u["S"])))
+curdat5[is.na(curdat5)] = 0
+curdat5 = curdat5 %>% mutate_at(c('Need', 'Typical', 'Strength'), as.numeric)
+curdat5$Total = curdat5$Need + curdat5$Typical + curdat5$Strength
+
+# kbl(curdat5, caption = "caption", booktabs = T, escape = F) %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) # numbers 
+
+curdat6 = curdat5[1:14, ]
+curdat6$Need = curdat6$Need/curdat6$Total
+curdat6$Typical = curdat6$Typical/curdat6$Total
+curdat6$Strength = curdat6$Strength/curdat6$Total
+curdat6 = curdat6[, 1:4]
+
+# kbl(curdat6, caption = "caption", booktabs = T, escape = F) %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) # percentages
+
+```
+
+\newpage 
+
+## page 4
+```{r echo=FALSE}
+# numbers 
+# kbl(curdat1, caption = "caption", booktabs = T, escape = F, linesep = "") %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))%>% 
+#   row_spec(c(1), bold = T) 
+# 
+# kbl(curdat3, caption = "caption", booktabs = T, escape = F, linesep = "") %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+# kbl(curdat5, caption = "caption", booktabs = T, escape = F, linesep = "") %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+
+curdat = rbind(curdat1, curdat3)
+kbl(curdat, caption = "DESSA Category Breakdown by Grade (Count)", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(1,16), bold = T) 
+```
+
+\newpage 
+
+## page 5
+```{r echo=FALSE, warning=FALSE}
+# percentages 
+colnames(curdat2) = c("2021-2022 Academic Year", "Need \\%", "Typical \\%", "Strength \\%")
+colnames(curdat4) = c("2021-2022 Academic Year", "Need \\%", "Typical \\%", "Strength \\%")
+colnames(curdat6) = c("2021-2022 Academic Year", "Need \\%", "Typical \\%", "Strength \\%")
+# kbl(curdat2, caption = "caption", booktabs = T, escape = F, linesep = "") %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+# kbl(curdat4, caption = "caption", booktabs = T, escape = F, linesep = "") %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+# kbl(curdat6, caption = "caption", booktabs = T, escape = F, linesep = "") %>% 
+#   kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+
+curdat = rbind(curdat2, curdat4, curdat6)
+
+curdat$`Need \\%` = percent(curdat$`Need \\%` , digits = 2)
+curdat$`Typical \\%` = percent(curdat$`Typical \\%` , digits = 2)
+curdat$`Strength \\%` = percent(curdat$`Strength \\%`, digits = 2)
+
+curdat$`Need \\%` = cell_spec(curdat$`Need \\%`, color = ifelse(curdat$`Need \\%` < 0, 
+                                                     "black", "black"))
+curdat$`Typical \\%` = cell_spec(curdat$`Typical \\%`, color = ifelse(curdat$`Typical \\%` < 0, 
+                                                     "black", "black"))
+curdat$`Strength \\%` = cell_spec(curdat$`Strength \\%`, color = ifelse(curdat$`Strength \\%` < 0, 
+                                                     "black", "black"))
+
+kbl(curdat, caption = "DESSA Category Breakdown by Grade (Percentage)", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(1,15,29), bold = T) 
+```
+
+
+```{r include=FALSE}
+# firstone
+# secondone 
+# thirdone
+```
+
+\newpage 
+
+## page 7
+## Age Groups by Category
+
+```{r include=FALSE}
+# table(merged.dat$AgeAtRating[merged.dat$AgeAtRating<5]) # 21 people, 13 of whom are 0
+# table(merged.dat$AgeAtRatingMonths[merged.dat$AgeAtRatingMonths<60]) # 20 people
+# table(merged.dat$AgeAtRating[merged.dat$AgeAtRating>19]) # 1 person is 20
+
+merged.dat = merged.dat %>% mutate(AgeCategory = case_when(
+  (AgeAtRating >=5 & AgeAtRating <= 8) ~ "Ages 5-8",
+  (AgeAtRating >= 9 & AgeAtRating <= 12) ~ "Ages 9-12",
+  (AgeAtRating >= 13 & AgeAtRating <= 15) ~ "Ages 13-15",
+  (AgeAtRating >= 16 & AgeAtRating <= 19) ~ "Ages 16-19"))
+
+# do some checks:
+# table(merged.dat$AgeAtRating)
+# table(merged.dat$AgeCategory)
+
+# common columns for the stacked graphs' data frames 
+Age.Group = c(rep("Ages 5-8", 3), rep("Ages 9-12", 3), 
+                rep("Ages 13-15", 3), rep("Ages 16-19", 3))
+
+Description = c(rep(c("c.Need", "b.Typical", "a.Strength"), 4))
+```
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+# period 1
+p1.5to8 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                   merged.dat$AgeCategory == "Ages 5-8")
+p1.9to12 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                   merged.dat$AgeCategory == "Ages 9-12")
+p1.13to15 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                   merged.dat$AgeCategory == "Ages 13-15")
+p1.16to19 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 1", "2021-2022 SEL-C Rating Period 1") &
+                   merged.dat$AgeCategory == "Ages 16-19")
+
+p1.5to8 = table(p1.5to8$Description); p1.9to12 = table(p1.9to12$Description); 
+p1.13to15 = table(p1.13to15$Description); p1.16to19 = table(p1.16to19$Description)
+
+`Number of Ratings` = as.vector(c(p1.5to8["N"], p1.5to8["T"], p1.5to8["S"],
+                                  p1.9to12["N"], p1.9to12["T"], p1.9to12["S"],
+                                  p1.13to15["N"], p1.13to15["T"], p1.13to15["S"],
+                                  p1.16to19["N"], p1.16to19["T"], p1.16to19["S"]))
+
+dat.for.stacked = data.frame(Age.Group, Description, `Number of Ratings`)
+# dat.for.stacked
+dat.for.stacked$Age.Group = factor(dat.for.stacked$Age.Group,
+                               levels = c("Ages 5-8", "Ages 9-12", "Ages 13-15", "Ages 16-19"))
+# Stacked
+ggplot(dat.for.stacked, 
+  aes(x=Age.Group, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("Period 1: 2021-2022 SEC/SET Ratings by Age Group") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+```
+
+```{r include=FALSE}
+# period 1 table
+no.ratings.sum = (dat.for.stacked %>%
+                    group_by(Age.Group) %>%
+                    summarize(no.ratings.sum = sum(Number.of.Ratings, na.rm = TRUE)))$no.ratings.sum
+dat.for.stacked$no.ratings.sum = rep(no.ratings.sum, each=3)
+
+p1.need.sum = as.numeric(dat.for.stacked %>% filter(Description == "c.Need") %>% 
+                           summarize(p1.n.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p1.typ.sum = as.numeric(dat.for.stacked %>% filter(Description == "b.Typical") %>% 
+                           summarize(p1.t.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p1.stren.sum = as.numeric(dat.for.stacked %>% filter(Description == "a.Strength") %>% 
+                           summarize(p1.s.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+
+allnumbers = dat.for.stacked$Number.of.Ratings
+allpercentages = dat.for.stacked$Number.of.Ratings/dat.for.stacked$no.ratings.sum
+
+curdat1 = data.frame(matrix(ncol = 4))
+colnames(curdat1) = c("2021-2022 Academic Year", "Need", "Typical", "Strength")
+curdat1[1,] = c("Rating Period 1", p1.need.sum, p1.typ.sum, p1.stren.sum)
+curdat1[2,] = c("Ages 5-8", allnumbers[1:3])
+curdat1[3,] = c("Ages 9-12", allnumbers[4:6])
+curdat1[4,] = c("Ages 13-15", allnumbers[7:9])
+curdat1[5,] = c("Ages 16-19", allnumbers[10:12])
+```
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+# period 2
+p2.5to8 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                   merged.dat$AgeCategory == "Ages 5-8")
+p2.9to12 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                   merged.dat$AgeCategory == "Ages 9-12")
+p2.13to15 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                   merged.dat$AgeCategory == "Ages 13-15")
+p2.16to19 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 2", "2021-2022 SEL-C Rating Period 2") &
+                   merged.dat$AgeCategory == "Ages 16-19")
+
+p2.5to8 = table(p2.5to8$Description); p2.9to12 = table(p2.9to12$Description); 
+p2.13to15 = table(p2.13to15$Description); p2.16to19 = table(p2.16to19$Description)
+
+`Number of Ratings` = as.vector(c(p2.5to8["N"], p2.5to8["T"], p2.5to8["S"],
+                                  p2.9to12["N"], p2.9to12["T"], p2.9to12["S"],
+                                  p2.13to15["N"], p2.13to15["T"], p2.13to15["S"],
+                                  p2.16to19["N"], p2.16to19["T"], p2.16to19["S"]))
+
+dat.for.stacked = data.frame(Age.Group, Description, `Number of Ratings`)
+# dat.for.stacked
+dat.for.stacked$Age.Group = factor(dat.for.stacked$Age.Group, 
+                               levels = c("Ages 5-8", "Ages 9-12", "Ages 13-15", "Ages 16-19"))
+# Stacked
+ggplot(dat.for.stacked, 
+  aes(x=Age.Group, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  geom_col(width = 0.5) +
+  xlab("Age Group") +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("Period 2: 2021-2022 SEC/SET Ratings by Age Group") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+```
+```{r include=FALSE}
+# period 2 table
+dat.for.stacked
+# period 1 table
+no.ratings.sum = (dat.for.stacked %>%
+                    group_by(Age.Group) %>%
+                    summarize(no.ratings.sum = sum(Number.of.Ratings, na.rm = TRUE)))$no.ratings.sum
+dat.for.stacked$no.ratings.sum = rep(no.ratings.sum, each=3)
+
+p2.need.sum = as.numeric(dat.for.stacked %>% filter(Description == "c.Need") %>% 
+                           summarize(p2.n.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p2.typ.sum = as.numeric(dat.for.stacked %>% filter(Description == "b.Typical") %>% 
+                           summarize(p2.t.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p2.stren.sum = as.numeric(dat.for.stacked %>% filter(Description == "a.Strength") %>% 
+                           summarize(p2.s.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+
+allnumbers = dat.for.stacked$Number.of.Ratings
+allpercentages = dat.for.stacked$Number.of.Ratings/dat.for.stacked$no.ratings.sum
+
+curdat1[6,] = c("Rating Period 2", p2.need.sum, p2.typ.sum, p2.stren.sum)
+curdat1[7,] = c("Ages 5-8", allnumbers[1:3])
+curdat1[8,] = c("Ages 9-12", allnumbers[4:6])
+curdat1[9,] = c("Ages 13-15", allnumbers[7:9])
+curdat1[10,] = c("Ages 16-19", allnumbers[10:12])
+
+
+# curdat5[is.na(curdat5)] = 0
+# curdat5 = curdat5 %>% mutate_at(c('Need', 'Typical', 'Strength'), as.numeric)
+# curdat5$Total = curdat5$Need + curdat5$Typical + curdat5$Strength
+```
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+# period 3
+p3.5to8 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                   merged.dat$AgeCategory == "Ages 5-8")
+p3.9to12 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                   merged.dat$AgeCategory == "Ages 9-12")
+p3.13to15 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                   merged.dat$AgeCategory == "Ages 13-15")
+p3.16to19 = filter(merged.dat, merged.dat$RatingPeriodName %in% 
+                   c("2021-2022 High School Rating Period 3", "2021-2022 SEL-C Rating Period 3") &
+                   merged.dat$AgeCategory == "Ages 16-19")
+
+p3.5to8 = table(p3.5to8$Description); p3.9to12 = table(p3.9to12$Description); 
+p3.13to15 = table(p3.13to15$Description); p3.16to19 = table(p3.16to19$Description)
+
+`Number of Ratings` = as.vector(c(p3.5to8["N"], p3.5to8["T"], p3.5to8["S"],
+                                  p3.9to12["N"], p3.9to12["T"], p3.9to12["S"],
+                                  p3.13to15["N"], p3.13to15["T"], p3.13to15["S"],
+                                  p3.16to19["N"], p3.16to19["T"], p3.16to19["S"]))
+
+dat.for.stacked = data.frame(Age.Group, Description, `Number of Ratings`)
+# dat.for.stacked
+dat.for.stacked$Age.Group = factor(dat.for.stacked$Age.Group, 
+                               levels = c("Ages 5-8", "Ages 9-12", "Ages 13-15", "Ages 16-19"))
+# Stacked
+ggplot(dat.for.stacked, 
+  aes(x=Age.Group, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) + 
+  geom_col(width = 0.5) +
+  xlab("Age Group") +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("Period 3: 2021-2022 SEC/SET Ratings by Age Group") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+```
+
+```{r include=FALSE}
+# period 1 table
+no.ratings.sum = (dat.for.stacked %>%
+                    group_by(Age.Group) %>%
+                    summarize(no.ratings.sum = sum(Number.of.Ratings, na.rm = TRUE)))$no.ratings.sum
+dat.for.stacked$no.ratings.sum = rep(no.ratings.sum, each=3)
+
+p3.need.sum = as.numeric(dat.for.stacked %>% filter(Description == "c.Need") %>% 
+                           summarize(p3.n.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p3.typ.sum = as.numeric(dat.for.stacked %>% filter(Description == "b.Typical") %>% 
+                           summarize(p3.t.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+p3.stren.sum = as.numeric(dat.for.stacked %>% filter(Description == "a.Strength") %>% 
+                           summarize(p3.s.sum = sum(Number.of.Ratings, na.rm = TRUE)))
+
+allnumbers = dat.for.stacked$Number.of.Ratings
+allpercentages = dat.for.stacked$Number.of.Ratings/dat.for.stacked$no.ratings.sum
+
+curdat1[11,] = c("Rating Period 3", p3.need.sum, p3.typ.sum, p3.stren.sum)
+curdat1[12,] = c("Ages 5-8", allnumbers[1:3])
+curdat1[13,] = c("Ages 9-12", allnumbers[4:6])
+curdat1[14,] = c("Ages 13-15", allnumbers[7:9])
+curdat1[15,] = c("Ages 16-19", allnumbers[10:12])
+
+curdat1[is.na(curdat1)] = 0
+curdat1 = curdat1 %>% mutate_at(c('Need', 'Typical', 'Strength'), as.numeric)
+curdat1$Total = curdat1$Need + curdat1$Typical + curdat1$Strength
+```
+
+```{r echo=FALSE}
+curdat2 = curdat1
+curdat2$Need = curdat2$Need/curdat2$Total
+curdat2$Typical = curdat2$Typical/curdat2$Total
+curdat2$Strength = curdat2$Strength/curdat2$Total
+curdat2 = curdat2[, 1:4]
+
+curdat2$Need = percent(curdat2$Need , digits = 2)
+curdat2$Typical = percent(curdat2$Typical , digits = 2)
+curdat2$Strength = percent(curdat2$Strength, digits = 2)
+
+curdat2$Need = cell_spec(curdat2$Need, color = ifelse(curdat2$Need < 0, 
+                                                     "black", "black"))
+curdat2$Typical = cell_spec(curdat2$Typical, color = ifelse(curdat2$Typical < 0, 
+                                                     "black", "black"))
+curdat2$Strength = cell_spec(curdat2$Strength, color = ifelse(curdat2$Strength < 0, 
+                                                     "black", "black"))
+
+kbl(curdat1[, 1:4], caption = "Breakdown by Age Group (Count)", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(1,6,11), bold = T) 
+
+colnames(curdat2) = c("2021-2022 Academic Year", "Need \\%", "Typical \\%", "Strength \\%")
+kbl(curdat2, caption = "Breakdown by Age Group (Percentage)", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(1,6,11), bold = T) 
+```
+
+## page 8
+
+## DESSA Change Over Time
+
+```{r include=FALSE}
+# SEC and SET are different names so first merge full and mini data separately
+common.cols = intersect(intersect(names(dat1), names(dat2)), names(dat4)) # merge just full-sized data
+common.cols.mini = intersect(names(dat3), names(dat6)) # merge mini data
+
+merged.dat.full = rbind(dat1[, common.cols], dat2[, common.cols], dat4[,common.cols])
+# nrow(dat1) + nrow(dat2) + nrow(dat4) == nrow(merged.dat.full)
+merged.dat.mini = rbind(dat3[, common.cols.mini], dat6[, common.cols.mini])
+# nrow(dat3) + nrow(dat6) == nrow(merged.dat.mini)
+```
+
+```{r include=FALSE}
+periods.selc = c("2021-2022 SEL-C Rating Period 1",
+                 "2021-2022 SEL-C Rating Period 2")
+merged.dat.full = filter(merged.dat.full, merged.dat.full$RatingPeriodName %in% periods.selc)
+merged.dat.mini = filter(merged.dat.mini, merged.dat.mini$RatingPeriodName %in% periods.selc)
+#
+period1_ids.full = merged.dat.full$StudentId[merged.dat.full$RatingPeriodName==
+                                               "2021-2022 SEL-C Rating Period 1"]
+period2_ids.full = merged.dat.full$StudentId[merged.dat.full$RatingPeriodName==
+                                               "2021-2022 SEL-C Rating Period 2"]
+period1_ids.mini = merged.dat.mini$StudentId[merged.dat.mini$RatingPeriodName==
+                                               "2021-2022 SEL-C Rating Period 1"]
+period2_ids.mini = merged.dat.mini$StudentId[merged.dat.mini$RatingPeriodName==
+                                               "2021-2022 SEL-C Rating Period 2"]
+ids_withboth.full = intersect(period1_ids.full, period2_ids.full)
+ids_withboth.mini = intersect(period1_ids.mini, period2_ids.mini)
+
+merged.dat.full = filter(merged.dat.full, merged.dat.full$StudentId %in% ids_withboth.full)
+merged.dat.mini = filter(merged.dat.mini, merged.dat.mini$StudentId %in% ids_withboth.mini)
+merged.dat.mini = merged.dat.mini[-87, ]
+# all period 1s for all others were 2021 so DFYF500294's period 1 in 2021 is being used only:
+# View(merged.dat.mini[merged.dat.mini$RatingPeriodName == "2021-2022 SEL-C Rating Period 1", ])
+# merged.dat.mini[c(21, 87), ]
+
+# View(merged.dat.full)
+# View(merged.dat.mini)
+```
+
+```{r include=FALSE}
+# 510 unique IDs across all mini data (dat3, dat6)
+# 1373 unique IDs across all full data (dat1, dat2, dat4)
+# length(unique(merged.dat.full$StudentId))
+# length(unique(merged.dat.mini$StudentId))
+# between SEL-C Rating periods 1 and 2 data, 126 overlap
+# table(unique(merged.dat.mini$StudentId) %in% unique(merged.dat.full$StudentId))
+# table(unique(merged.dat.full$StudentId) %in% unique(merged.dat.mini$StudentId))
+```
+
+```{r include=FALSE}
+# table(merged.dat.full$SECDescription[merged.dat.full$RatingPeriodName==
+#                                        "2021-2022 SEL-C Rating Period 1"])
+# table(merged.dat.mini$SETDescription[merged.dat.mini$RatingPeriodName==
+#                                        "2021-2022 SEL-C Rating Period 1"])
+selcp1 = table(merged.dat.full$SECDescription[merged.dat.full$RatingPeriodName=="2021-2022 SEL-C Rating Period 1"]) + table(merged.dat.mini$SETDescription[merged.dat.mini$RatingPeriodName=="2021-2022 SEL-C Rating Period 1"])
+
+selcp2 =table(merged.dat.full$SECDescription[merged.dat.full$RatingPeriodName=="2021-2022 SEL-C Rating Period 2"]) + table(merged.dat.mini$SETDescription[merged.dat.mini$RatingPeriodName=="2021-2022 SEL-C Rating Period 2"])
+
+`Rating Period` = c(rep("Period 1" , 3), rep("Period 2" , 3))
+Description = c(rep(c("c.Need", "b.Typical", "a.Strength"), 2))
+`Number of Ratings` = as.vector(c(selcp1["N"], selcp1["T"], selcp1["S"],
+                                  selcp2["N"], selcp2["T"], selcp2["S"]))
+dat.for.stacked = data.frame(`Rating Period`, Description, `Number of Ratings`)
+# View(dat.for.stacked)
+```
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+# Stacked
+ggplot(dat.for.stacked,
+  aes(x=`Rating Period`, y=`Number of Ratings`, fill=Description, label = `Number of Ratings`)) +
+  # geom_bar(position="stack", stat="identity") +
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("Total SEC/SET Ratings by Period") +
+  xlab("2021-2022 SEL-C Rating Period") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D"))
+# verify with tables or df that stacked plot is correct
+# selcp1
+# selcp2
+# View(dat.for.stacked)
+```
+
+```{r include=FALSE, out.width='75%', warning=FALSE}
+df = data.frame(`Number of Ratings` = c(selcp1["N"], selcp2["N"], selcp1["T"], selcp2["T"],
+                                selcp1["S"], selcp2["S"]),
+                `Description` = rep(c("Need", "Typical", "Strength"), each = 2),
+                `Period` = rep(c("Period 1", "Period 2"), 3))
+colnames(df) = c("Number of Ratings", "Description", "Period")
+df$Description = factor(df$Description, levels = c("Need", "Typical", "Strength"))
+
+ggplot(df, 
+       aes(x = Period, y = `Number of Ratings`, fill=Description, label="")) + 
+  geom_bar(stat = "identity", position = 'dodge') +
+  ylab("Number of Ratings") +
+  ggtitle("2021-2022 SEC/SET Ratings by Period") +
+  scale_fill_manual(values = rep(c("#F8766D", "#619CFF", "#00BA38"), 3)) +
+  geom_text(
+    aes(label = `Number of Ratings`, y = `Number of Ratings` + 10),
+    position = position_dodge(0.9),
+    vjust = 0, size=3
+  )
+```
+
+<!-- ^^ Total number of SEC/SET ratings done in period 1 is same as period 2 because. studentID: DFYF500294 has two ratings done in period 1 but one was dropped based on timing. -->
+
+```{r include=FALSE}
+# sort(table(merged.dat.full$StudentId[merged.dat.full$RatingPeriodName=="2021-2022 SEL-C Rating Period 1"]),
+#      decreasing=T) # problem not here
+
+# sort(table(merged.dat.mini$StudentId[merged.dat.mini$RatingPeriodName=="2021-2022 SEL-C Rating Period 1"]),
+#      decreasing=T) # DFYF500294 has two ratings done in period 2
+
+# filter(merged.dat.mini, merged.dat.mini$StudentId=="DFYF500294")
+```
+
+```{r echo=FALSE}
+Rating = c("Need", "Typical", "Strength")
+p1N = as.vector(c(selcp1["N"], selcp1["T"], selcp1["S"]))
+p2N = as.vector(c(selcp2["N"], selcp2["T"], selcp2["S"]))
+p1P = as.vector(c(selcp1["N"], selcp1["T"], selcp1["S"]))/
+                        sum(as.vector(c(selcp1["N"], selcp1["T"], selcp1["S"])))
+# p1P.percentage = percent(p1P, digits=2)
+# p2P.percentage = percent(p2P, digits=2)
+p2P = as.vector(c(selcp2["N"], selcp2["T"], selcp2["S"]))/
+                        sum(as.vector(c(selcp2["N"], selcp2["T"], selcp2["S"])))
+p1P = percent(p1P)
+p2P = percent(p2P)
+dat.for.table = data.frame(Rating, p1N, p2N, p1P, p2P)
+dat.for.table$change = percent(dat.for.table$p2P - dat.for.table$p1P, digits=2)
+dat.for.table2 = dat.for.table
+# dat.for.table$p1P = percent(dat.for.table$p1P, digits=2)
+# dat.for.table$p2P = percent(dat.for.table$p2P, digits=2)
+
+dat.for.table$change = cell_spec(dat.for.table$change, 
+                                      color = ifelse(dat.for.table$change < 0, 
+                                                     "black", "black"))
+dat.for.table$p1P = cell_spec(dat.for.table$p1P,
+                                      color = ifelse(dat.for.table$p1P < 0,
+                                                     "black", "black"))
+dat.for.table$p2P = cell_spec(dat.for.table$p2P,
+                                      color = ifelse(dat.for.table$p2P < 0,
+                                                     "black", "black"))
+                                                     
+# dat.for.table$Rating.P1..p. = percent(dat.for.table$Rating.P1..p., digits=2)
+
+colnames(dat.for.table) = c("Description", "Period 1", "Period 2", "Period 1 \\%",
+                             "Period 2 \\%", "Change")
+kbl(dat.for.table, caption = "2021-2022 SEC/SET Ratings in Periods 1 and 2", 
+    booktabs = T, escape = F, linesep = "")
+```
+
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+colnames(dat.for.table2) = c("Description", "Period 1", "Period 2", "Period 1 %", "Period 2 %", "Change")
+
+Description = c(rep("a.Need", 2), rep("b.Typical", 2), rep("c.Strength", 2))
+`Rating Period` =  rep(c(" SEL-C Period 1", " SEL-C Period 2"), 3)
+# dat.for.table[, c("Rating.Period.1..p.", "Rating.Period.2..p.")]
+# as.vector(unlist(dat.for.table["Need", c("Rating.Period.1..p.", "Rating.Period.2..p.")]))
+`Percent of Ratings` = percent(as.vector(unlist(c(dat.for.table2[1, c("Period 1 %", "Period 2 %")],
+                                   dat.for.table2[2, c("Period 1 %", "Period 2 %")],
+                                   dat.for.table2[3, c("Period 1 %", "Period 2 %")]))))
+
+df = data.frame(Description, `Rating Period`, `Percent of Ratings`)
+
+ggplot(df, aes(x=`Rating Period`, y=`Percent of Ratings`, group=Description)) +
+  geom_line(aes(color=Description))+
+  geom_point(aes(color=Description)) +
+  xlab("Percent of Ratings") +
+  labs(title = "2021-2022 SEC/SET Ratings by SEL-C Rating Period") +
+  scale_color_manual(values=c("#F8766D", "#619CFF", "#00BA38"), labels = c("Need", "Typical", "Strength")) +
+  scale_y_continuous(labels = scales::percent)
+```
+
+\newpage
+
+## Page 9
+
+```{r include=FALSE}
+period1people.full = filter(merged.dat.full, merged.dat.full$RatingPeriodName == 
+                              "2021-2022 SEL-C Rating Period 1")
+period2people.full = filter(merged.dat.full, merged.dat.full$RatingPeriodName == 
+                              "2021-2022 SEL-C Rating Period 2")
+period1people.mini = filter(merged.dat.mini, merged.dat.mini$RatingPeriodName == 
+                              "2021-2022 SEL-C Rating Period 1")
+period2people.mini = filter(merged.dat.mini, merged.dat.mini$RatingPeriodName == 
+                              "2021-2022 SEL-C Rating Period 2")
+# IDS of students with N in period 1
+p1.n.full = period1people.full$StudentId[period1people.full$SECDescription == "N"]
+p1.n.mini = period1people.mini$StudentId[period1people.mini$SETDescription == "N"]
+# IDS of students with T in period 1
+p1.t.full = period1people.full$StudentId[period1people.full$SECDescription == "T"]
+p1.t.mini = period1people.mini$StudentId[period1people.mini$SETDescription == "T"]
+# IDS of students with S in period 1
+p1.s.full = period1people.full$StudentId[period1people.full$SECDescription == "S"]
+p1.s.mini = period1people.mini$StudentId[period1people.mini$SETDescription == "S"]
+# IDS of students with N in period 2
+p2.n.full = period2people.full$StudentId[period2people.full$SECDescription == "N"]
+p2.n.mini = period2people.mini$StudentId[period2people.mini$SETDescription == "N"]
+# IDS of students with T in period 2
+p2.t.full = period2people.full$StudentId[period2people.full$SECDescription == "T"]
+p2.t.mini = period2people.mini$StudentId[period2people.mini$SETDescription == "T"]
+# IDS of students with S in period 2
+p2.s.full = period2people.full$StudentId[period2people.full$SECDescription == "S"]
+p2.s.mini = period2people.mini$StudentId[period2people.mini$SETDescription == "S"]
+# count of 1st and 2nd rating ex. nt = N in period  1, T in period 2 
+nn = length(intersect(p1.n.full, p2.n.full)) + length(intersect(p1.n.mini, p2.n.mini))
+nt = length(intersect(p1.n.full, p2.t.full)) + length(intersect(p1.n.mini, p2.t.mini))
+ns = length(intersect(p1.n.full, p2.s.full)) + length(intersect(p1.n.mini, p2.s.mini))
+tn = length(intersect(p1.t.full, p2.n.full)) + length(intersect(p1.t.mini, p2.n.mini))
+tt = length(intersect(p1.t.full, p2.t.full)) + length(intersect(p1.t.mini, p2.t.mini))
+ts = length(intersect(p1.t.full, p2.s.full)) + length(intersect(p1.t.mini, p2.s.mini))
+sn = length(intersect(p1.s.full, p2.n.full)) + length(intersect(p1.s.mini, p2.n.mini))
+st = length(intersect(p1.s.full, p2.t.full)) + length(intersect(p1.s.mini, p2.t.mini))
+ss = length(intersect(p1.s.full, p2.s.full)) + length(intersect(p1.s.mini, p2.s.mini))
+# nn + nt + ns + tn + tt + ts + sn + st + ss; (nrow(merged.dat.full) + nrow(merged.dat.mini))/2
+```
+
+```{r echo=FALSE, out.width='75%'}
+# "#F8766D", "#619CFF", "#00BA38" red blue green
+df = data.frame(period1 = c(rep("Need", 3), rep("Typical", 3), rep("Strength", 3)),
+                period2 = rep(c("Need", "Typical", "Strength"), 3), 
+                counts = c(nn, nt, ns, tn, tt, ts, sn, st, ss), 
+                color.dot = c("#619CFF", "#00BA38", "#00BA38", "#F8766D", "#619CFF", "#00BA38", "#F8766D", "#F8766D", "#619CFF"))
+
+ggplot(df, aes(x = period1, y = period2)) +
+  geom_point(aes(color = color.dot, size = counts)) +
+  xlab("Period 1") +
+  ylab("Period 2") +
+  labs(title = "Periodic Change in 2021-2022 SEC/SET Ratings Over Periods 1 and 2") +
+  scale_size(range = c(5, 30)) +
+  geom_text( aes(label=counts)) +
+  theme(legend.position="none") + 
+  scale_color_identity() # NEED THIS, W/O IT COLOR IS READ INCORRECRTLY! 
+
+```
+
+```{r echo=FALSE}
+# nn, nt, ns, tn, tt, ts, sn, st, ss
+nts.sum = nn + nt + ns + tn + tt + ts + sn + st + ss
+df2 = data.frame(`Change` = c("Moved into a higher category", "Stayed in the same category", "Moved into a lower category"),
+                `No. of Students` = c(nt+ns+ts, nn+tt+ss, tn+sn+st),
+                `percent` = c((nt+ns+ts)/nts.sum, (nn+tt+ss)/nts.sum, 
+                        (tn+sn+st)/nts.sum))
+
+colnames(df) = c("Period 1", "Period 2", "Number of Students")
+kbl(df[,1:3], caption = "2021-2022 Ratings in Period 1 and 2", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+
+df2$percent = percent(df2$percent , digits = 2)
+
+df2$percent = cell_spec(df2$percent, color = ifelse(df2$percent < 0,
+                                                     "black", "black"))
+
+colnames(df2) = c("Change", "Number of Students", "Percent of Students")
+kbl(df2, caption = "Change in Ratings Among Students", booktabs = T, escape = F, linesep = "")
+```
+
+\newpage 
+## Page 10
+
+```{r include=FALSE}
+# merged.dat.full = filter(merged.dat.full, merged.dat.full$StudentId %in% ids_withboth.full)
+# merged.dat.mini = filter(merged.dat.mini, merged.dat.mini$StudentId %in% ids_withboth.mini)
+
+tscorep1.full = filter(merged.dat.full, RatingPeriodName=="2021-2022 SEL-C Rating Period 1" & 
+                        StudentId %in% ids_withboth.full) %>% 
+  select("RatingPeriodName", "StudentId", "SECTScore")
+colnames(tscorep1.full) = c("RatingPeriodName", "StudentId", "SECTScore.before")
+
+tscorep2.full = filter(merged.dat.full, RatingPeriodName=="2021-2022 SEL-C Rating Period 2" & 
+                        StudentId %in% ids_withboth.full) %>% 
+  select("RatingPeriodName", "StudentId","SECTScore")
+colnames(tscorep2.full) = c("RatingPeriodName", "StudentId", "SECTScore.after")
+
+tscorep1.mini = filter(merged.dat.mini, RatingPeriodName=="2021-2022 SEL-C Rating Period 1" & 
+                        StudentId %in% ids_withboth.mini) %>% select("RatingPeriodName", "StudentId",
+                                                                     "SETTScore")
+colnames(tscorep1.mini) = c("RatingPeriodName", "StudentId", "SETTScore.before")
+tscorep2.mini = filter(merged.dat.mini, RatingPeriodName=="2021-2022 SEL-C Rating Period 2" & 
+                        StudentId %in% ids_withboth.mini) %>% 
+  select("RatingPeriodName", "StudentId", "SETTScore")
+colnames(tscorep2.mini) = c("RatingPeriodName", "StudentId", "SETTScore.after")
+
+tscore.full = merge(tscorep1.full, tscorep2.full, by.x = 'StudentId', by.y = 'StudentId')
+tscore.mini = merge(tscorep1.mini, tscorep2.mini, by.x = 'StudentId', by.y = 'StudentId')
+
+tscore.full$TScore.Change = tscore.full$SECTScore.after - tscore.full$SECTScore.before
+tscore.full = tscore.full %>% mutate(Difference.mag = case_when(
+  (TScore.Change < 2 & TScore.Change > -2) ~ "No Change",
+  (TScore.Change <= -2 & TScore.Change >= -4) ~ "Small Decrease",
+  (TScore.Change <= -5 & TScore.Change >= -7) ~ "Medium Decrease",
+  (TScore.Change <= -8) ~ "Large Decrease",
+  (TScore.Change >= 2 & TScore.Change <= 4) ~ "Small Increase",
+  (TScore.Change >= 5 & TScore.Change <= 7) ~ "Medium Increase",
+  (TScore.Change >= 8) ~ "Large Increase"))
+
+tscore.mini$TScore.Change = tscore.mini$SETTScore.after - tscore.mini$SETTScore.before
+tscore.mini = tscore.mini %>% mutate(Difference.mag = case_when(
+  (TScore.Change < 2 & TScore.Change > -2) ~ "No Change",
+  (TScore.Change <= -2 & TScore.Change >= -4) ~ "Small Decrease",
+  (TScore.Change <= -5 & TScore.Change >= -7) ~ "Medium Decrease",
+  (TScore.Change <= -8) ~ "Large Decrease",
+  (TScore.Change >= 2 & TScore.Change <= 4) ~ "Small Increase",
+  (TScore.Change >= 5 & TScore.Change <= 7) ~ "Medium Increase",
+  (TScore.Change >= 8) ~ "Large Increase"))
+
+tscore.fullAndMini = c(tscore.full$Difference.mag, tscore.mini$Difference.mag)
+```
+
+```{r echo=FALSE, out.width='75%'}
+curtab = table(tscore.fullAndMini) 
+# curtab["Large Decrease"]
+df = data.frame(`Frequency` = c(curtab["Small Decrease"], curtab["Small Increase"],
+                            curtab["Medium Decrease"], curtab["Medium Increase"],
+                            curtab["Large Decrease"], curtab["Large Increase"]),
+                `Change` = rep(c("Small", "Medium", "Large"), each = 2),
+                `Direction` = c("Decrease", "Increase"))
+df$Change = factor(df$Change, levels = c("Small", "Medium", "Large"))
+ggplot(df, aes(x = `Change`, y = Frequency, fill=Direction)) + 
+  geom_bar(stat = "identity", position = 'dodge', width=0.7) +
+  ylab("Number of Students") +
+  ggtitle("2021-2022 DESSA SEC/SET T-Score Shifts Over Periods 1 and 2") +
+  scale_fill_manual(values = rep(c("#F8766D", "#619CFF"),3))
+```
+
+```{r echo=FALSE}
+# curtab
+df2 = data.frame(`col1` = c("Large Decrease", "Medium Decrease", "Small Decrease", 
+                          "No Change", "Small Increase", "Medium Increase", "Large Increase"),
+                 `col2` = as.vector(unlist(c(curtab["Large Decrease"], curtab["Medium Decrease"], 
+                          curtab["Small Decrease"], curtab["No Change"], curtab["Small Increase"],
+                          curtab["Medium Increase"], curtab["Large Increase"]))))
+df2$col3 = df2$col2 / sum(df2$col2)
+df2$col3 = as.numeric(df2$col3)
+df2 = rbind(df2, c("Total", sum(df2$col2), sum(df2$col3)))
+df2$col3 = as.numeric(df2$col3)
+colnames(df2) = c("Difference", "Students", "Percentage")
+
+df3 = df2
+df3$Percentage = percent(df3$Percentage , digits = 2)
+df3$Percentage = cell_spec(df3$Percentage, color = ifelse(df3$Percentage < 0,
+                                                     "black", "black"))
+
+kbl(df3, caption = "Difference in T-Scores from Period 1 to 2", booktabs = T, escape = F, linesep = "") %>% 
+ kable_styling(latex_options = c("hold_position", "repeat_header", "striped")) %>% 
+  row_spec(c(8), bold = T) 
+```
+
+```{r echo=FALSE, out.width='75%'}
+# curtab = table(tscore.fullAndMini) 
+# # curtab["Large Decrease"]
+# df = data.frame(`Frequency` = c(curtab["Small Decrease"], curtab["Small Increase"],
+#                             curtab["Medium Decrease"], curtab["Medium Increase"],
+#                             curtab["Large Decrease"], curtab["Large Increase"]),
+#                 `Change` = rep(c("Small", "Medium", "Large"), each = 2),
+#                 `Direction` = c("Decrease", "Increase"))
+df2$Difference = c("Large \n Decrease", "Medium \n Decrease",
+                        "Small \n Decrease", "No Change", "Small \n Increase", "Medium \n Increase",
+                        "Large \n Increase", "Total")
+df2$Difference = factor(df2$Difference, levels = c("Large \n Decrease", "Medium \n Decrease",
+                        "Small \n Decrease", "No Change", "Small \n Increase", "Medium \n Increase",
+                        "Large \n Increase", "Total"))
+# df2$Percentage = percent(df2$Percentage)
+ggplot(df2[-8,], aes(x = `Difference`, y = `Percentage`, fill=`Difference`)) + 
+  geom_bar(stat = "identity", position = 'dodge', width=0.7) +
+  ylab("Percentage of Students") +
+  scale_y_continuous(labels = scales::percent) +
+  ggtitle("2021-2022 DESSA SEC/SET T-Score Shifts Over Periods 1 and 2") + 
+  scale_fill_manual(values = c("#F8766D", "#F8766D", "#F8766D", "#808080",
+                               "#619CFF", "#619CFF", "#619CFF")) +
+  theme(legend.position="none")
+```
+
+\newpage
+## Page 11
+## DESSA Competency Overview: Rating Periods 1 and 2
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+# for period 1
+# EVERYONE here: (not just those in period 1 and 2 overlap)
+merged.dat.full2 = rbind(dat1[, common.cols], dat2[, common.cols], dat4[,common.cols])
+# nrow(merged.dat.full2) == nrow(dat1) + nrow(dat2) + nrow(dat4)
+# table(merged.dat.full2$RatingPeriodName == "2021-2022 SEL-C Rating Period 1")
+merged.dat.full2.p1 = filter(merged.dat.full2, merged.dat.full2$RatingPeriodName == "2021-2022 SEL-C Rating Period 1")
+
+# overall row will have SEC AND SET (from mini); all other rows will be SEC data only
+merged.dat.mini2 = rbind(dat3[, common.cols.mini], dat6[, common.cols.mini])
+merged.dat.mini2.p1 = filter(merged.dat.mini2, merged.dat.mini2$RatingPeriodName == "2021-2022 SEL-C Rating Period 1")
+
+competency = c("Personal Responsibility", "Self Awareness", "Self Management", 
+               "Goal Directed Behavior", "Optimistic Thinking", "Social Awareness", 
+               "Decision Making", "Relationship Skills", "Overall")
+
+pr.tab = table(merged.dat.full2.p1$PRDescription)
+sea.tab = table(merged.dat.full2.p1$SADescription)
+sm.tab = table(merged.dat.full2.p1$SMDescription)
+gb.tab = table(merged.dat.full2.p1$GBDescription)
+ot.tab = table(merged.dat.full2.p1$OTDescription)
+soa.tab = table(merged.dat.full2.p1$SODescription)
+dm.tab = table(merged.dat.full2.p1$DMDescription)
+rs.tab = table(merged.dat.full2.p1$RSDescription)
+overall.tab = table(merged.dat.full2.p1$SECDescription) + table(merged.dat.mini2.p1$SETDescription) # overall
+
+df1 = data.frame(competency)
+df1$N = as.vector(c(pr.tab["N"], sea.tab["N"], sm.tab["N"], gb.tab["N"], ot.tab["N"], soa.tab["N"], dm.tab["N"], rs.tab["N"], overall.tab["N"]))
+df1$`T` = as.vector(c(pr.tab["T"], sea.tab["T"], sm.tab["T"], gb.tab["T"], ot.tab["T"], soa.tab["T"], dm.tab["T"], rs.tab["T"], overall.tab["T"]))
+df1$S = as.vector(c(pr.tab["S"], sea.tab["S"], sm.tab["S"], gb.tab["S"], ot.tab["S"], soa.tab["S"], dm.tab["S"], rs.tab["S"], overall.tab["S"]))
+
+df1$Total = rowSums(df1[, c("N", "T", "S")])
+
+df1$`N (%)` = df1$N / df1$Total
+df1$`T (%)` = df1$`T` / df1$Total
+df1$`S (%)` = df1$`S` / df1$Total
+
+dat.for.stacked1 = data.frame(col1 = rep(c("Personal \n Responsibility", "Self \n Awareness", 
+               "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", 
+               "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", 
+               "Overall"), each=3), 
+               col2 = rep(c("c.Need", "b.Typical", "a.Strength"), 3), 
+               col3 = as.vector(unlist(c(df1[1, c(6:8)], df1[2, c(6:8)], df1[3, c(6:8)], df1[4, c(6:8)],
+                        df1[5, c(6:8)], df1[6, c(6:8)], df1[7, c(6:8)], df1[8, c(6:8)], df1[9, c(6:8)]))))
+colnames(dat.for.stacked1) = c("Competency", "Rating", "Percentage %") 
+dat.for.stacked1$Competency = factor(dat.for.stacked1$Competency, levels = rev(c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", "Overall")))
+
+dat.for.stacked1$`Percentage %` = percent(dat.for.stacked1$`Percentage %`, digits = 1)
+ggplot(dat.for.stacked1, 
+       aes(x=`Percentage %`, y=Competency, fill=Rating, label=`Percentage %`)) +
+  geom_bar(position="stack", stat="identity") + 
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("SEC/SET Ratings in SEL-C Period 1") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D")) +
+  scale_x_continuous(labels = scales::percent) +
+  xlab("")
+```
+
+```{r echo=FALSE}
+# period 1
+mydf1 = df1
+colnames(df1) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+mydf1$`N (%)` = percent(mydf1$`N (%)` , digits = 2)
+mydf1$`T (%)` = percent(mydf1$`T (%)` , digits = 2)
+mydf1$`S (%)` = percent(mydf1$`S (%)` , digits = 2)
+
+mydf1$`N (%)` = cell_spec(mydf1$`N (%)`, color = ifelse(mydf1$`N (%)` < 0,
+                                                     "black", "black"))
+mydf1$`T (%)` = cell_spec(mydf1$`T (%)`, color = ifelse(mydf1$`T (%)` < 0,
+                                                     "black", "black"))
+mydf1$`S (%)` = cell_spec(mydf1$`S (%)`, color = ifelse(mydf1$`S (%)` < 0,
+                                                     "black", "black"))
+
+colnames(mydf1) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+kbl(mydf1, caption = "Period 1 Competency Ratings Breakdown", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+
+```
+
+```{r echo=FALSE, out.width='75%', warning=FALSE}
+# period 2
+merged.dat.full2.p2 = filter(merged.dat.full2,
+                             merged.dat.full2$RatingPeriodName == "2021-2022 SEL-C Rating Period 2")
+
+# overall row will have SEC AND SET (from mini); all other rows will be SEC data only
+merged.dat.mini2.p2 = filter(merged.dat.mini2, merged.dat.mini2$RatingPeriodName == "2021-2022 SEL-C Rating Period 2")
+
+pr.tab = table(merged.dat.full2.p2$PRDescription)
+sea.tab = table(merged.dat.full2.p2$SADescription)
+sm.tab = table(merged.dat.full2.p2$SMDescription)
+gb.tab = table(merged.dat.full2.p2$GBDescription)
+ot.tab = table(merged.dat.full2.p2$OTDescription)
+soa.tab = table(merged.dat.full2.p2$SODescription)
+dm.tab = table(merged.dat.full2.p2$DMDescription)
+rs.tab = table(merged.dat.full2.p2$RSDescription)
+overall.tab = table(merged.dat.full2.p2$SECDescription) + table(merged.dat.mini2.p2$SETDescription) # overall
+
+
+df2 = data.frame(competency)
+df2$N = as.vector(c(pr.tab["N"], sea.tab["N"], sm.tab["N"], gb.tab["N"], ot.tab["N"], soa.tab["N"], dm.tab["N"], rs.tab["N"], overall.tab["N"]))
+df2$`T` = as.vector(c(pr.tab["T"], sea.tab["T"], sm.tab["T"], gb.tab["T"], ot.tab["T"], soa.tab["T"], dm.tab["T"], rs.tab["T"], overall.tab["T"]))
+df2$S = as.vector(c(pr.tab["S"], sea.tab["S"], sm.tab["S"], gb.tab["S"], ot.tab["S"], soa.tab["S"], dm.tab["S"], rs.tab["S"], overall.tab["S"]))
+
+df2$Total = rowSums(df2[, c("N", "T", "S")])
+
+df2$`N (%)` = df2$N / df2$Total
+df2$`T (%)` = df2$`T` / df2$Total
+df2$`S (%)` = df2$`S` / df2$Total
+
+dat.for.stacked2 = data.frame(col1 = rep(c("Personal \n Responsibility", "Self \n Awareness", 
+               "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", 
+               "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", 
+               "Overall"), each=3), 
+               col2 = rep(c("c.Need", "b.Typical", "a.Strength"), 3), 
+               col3 = as.vector(unlist(c(df2[1, c(6:8)], df2[2, c(6:8)], df2[3, c(6:8)], df2[4, c(6:8)],
+                        df2[5, c(6:8)], df2[6, c(6:8)], df2[7, c(6:8)], df2[8, c(6:8)], df2[9, c(6:8)]))))
+colnames(dat.for.stacked2) = c("Competency", "Rating", "Percentage %") 
+dat.for.stacked2$Competency = factor(dat.for.stacked2$Competency, levels = rev(c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", "Decision \n Making", "Relationship \n Skills", "Overall")))
+
+dat.for.stacked2$`Percentage %` = percent(dat.for.stacked2$`Percentage %`, digits = 1)
+ggplot(dat.for.stacked2, 
+       aes(x=`Percentage %`, y=Competency, fill=Rating, label=`Percentage %`)) +
+  geom_bar(position="stack", stat="identity") + 
+  geom_col(width = 0.5) +
+  geom_text(size = 3, position = position_stack(vjust = 0.5)) +
+  ggtitle("SEC/SET Ratings in SEL-C Period 2") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(labels=c('Strength', 'Typical', 'Need'), values = c("#00BA38","#619CFF", "#F8766D")) +
+  scale_x_continuous(labels = scales::percent) +
+  xlab("")
+```
+
+```{r echo=FALSE}
+# period 2
+mydf2 = df2
+colnames(df2) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+mydf2$`N (%)` = percent(mydf2$`N (%)` , digits = 2)
+mydf2$`T (%)` = percent(mydf2$`T (%)` , digits = 2)
+mydf2$`S (%)` = percent(mydf2$`S (%)` , digits = 2)
+
+mydf2$`N (%)` = cell_spec(mydf2$`N (%)`, color = ifelse(mydf2$`N (%)` < 0,
+                                                     "black", "black"))
+mydf2$`T (%)` = cell_spec(mydf2$`T (%)`, color = ifelse(mydf2$`T (%)` < 0,
+                                                     "black", "black"))
+mydf2$`S (%)` = cell_spec(mydf2$`S (%)`, color = ifelse(mydf2$`S (%)` < 0,
+                                                     "black", "black"))
+
+colnames(mydf2) = c("Competency", "N", "T", "S", "Total", "N (\\%)", "T (\\%)", "S (\\%)")
+
+kbl(mydf2, caption = "Period 2 Competency Ratings Breakdown", booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+```
+
+\newpage 
+## Page 12
+```{r echo=FALSE}
+df.diff = data.frame(matrix(ncol = 7, nrow = 9))
+colnames(df.diff) = c("Competency", "N", "T", "S", "N (p)", "T (p)", "S (p)")
+df.diff$Competency = df2[,1]
+df.diff$N = df2$N - df1$N
+df.diff$`T` = df2$`T` - df1$`T` 
+df.diff$S = df2$S - df1$S
+df.diff$`N (p)` = df2$`N (\\%)`- df1$`N (\\%)`
+df.diff$`T (p)` = df2$`T (\\%)`- df1$`T (\\%)`
+df.diff$`S (p)` = df2$`S (\\%)` - df1$`S (\\%)`
+
+colnames(df.diff) = c("Competency", "N", "T", "S", "N (\\%)", "T (\\%)", "S (\\%)")
+
+my.df.diff = df.diff
+
+my.df.diff$`N (\\%)` = percent(my.df.diff$`N (\\%)` , digits = 2)
+my.df.diff$`T (\\%)` = percent(my.df.diff$`T (\\%)` , digits = 2)
+my.df.diff$`S (\\%)` = percent(my.df.diff$`S (\\%)` , digits = 2)
+
+my.df.diff$`N (\\%)` = cell_spec(my.df.diff$`N (\\%)`, color = ifelse(my.df.diff$`N (\\%)` < 0,
+                                                     "black", "black"))
+my.df.diff$`T (\\%)` = cell_spec(my.df.diff$`T (\\%)`, color = ifelse(my.df.diff$`T (\\%)` < 0,
+                                                     "black", "black"))
+my.df.diff$`S (\\%)` = cell_spec(my.df.diff$`S (\\%)`, color = ifelse(my.df.diff$`S (\\%)` < 0,
+                                                     "black", "black"))
+
+kbl(my.df.diff, caption = "Difference in Competency Ratings (Period 2 - Period 1)", 
+    booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+```
+
+```{r echo=FALSE, out.width='90%', warning=FALSE}
+# df.diff[, c(1, 5, 7)]
+df.diff2 = data.frame(matrix(ncol = 3, nrow = 18))
+colnames(df.diff2) = c("X1", "X2", "Rating")
+rownames(df.diff2) = c("N.pr", "S.pr", "N.selfA", "S.selfA", "N.selfM", "S.selfM",
+                           "N.gb", "S.gb", "N.ot", "S.ot", "N.socA", "S.socA", "N.dm", "S.dm", 
+                           "N.rs", "S.rs", "N.overall", "S.overall")
+
+df.diff2$X1 = as.numeric(c(df.diff[1,c(5,7)], df.diff[2,c(5,7)], df.diff[3,c(5,7)], df.diff[4,c(5,7)],
+                df.diff[5,c(5,7)], df.diff[6,c(5,7)], df.diff[7,c(5,7)], df.diff[8,c(5,7)], df.diff[9,c(5,7)]))
+df.diff2$X2 = rep(c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", 
+                                 "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", 
+                                 "Decision \n Making","Relationship \n Skills", "Overall"), each=2)
+df.diff2$Rating = rep(c("Need", "Strength"), 9)
+
+df.diff2$X2 = factor(df.diff2$X2, levels = c("Personal \n Responsibility", "Self \n Awareness", "Self \n Management", 
+                                 "Goal Directed \n Behavior", "Optimistic \n Thinking", "Social \n Awareness", 
+                                 "Decision \n Making","Relationship \n Skills", "Overall"))
+ggplot(df.diff2, aes(x = X2, y = X1, fill=Rating)) + 
+  geom_bar(stat = "identity", position = 'dodge', width=0.7) +
+  ylab("Change (Period 2 (%) - Period 1 (%))") +
+  xlab("Competency") +
+  theme(axis.text.x = element_text(hjust=0.5, size=5.5)) +
+  ggtitle("2021-2022 Change in DESSA Competency Scores") +
+  scale_fill_manual(values = rep(c("#F8766D", "#619CFF"),3)) +
+  scale_y_continuous(labels = scales::percent)
+```
+
+\newpage 
+## page 13
+## Attrition Analysis
+
+```{r echo=FALSE, out.width='75%'}
+curdat = data.frame(matrix(ncol = 3, nrow = 3))
+colnames(curdat) = c("Rating Periods", "No. of Students", "Percentage")
+curdat$`Rating Periods` = c("1st Only", "2nd Only", "Both")
+curdat$`No. of Students` = c((table(unique(period1_ids.full) %in% ids_withboth.full))["FALSE"] +
+                             (table(unique(period1_ids.mini) %in% ids_withboth.mini))["FALSE"],
+                             (table(unique(period2_ids.full %in% ids_withboth.full)))["FALSE"] +
+                             (table(unique(period2_ids.mini) %in% ids_withboth.mini))["FALSE"],
+                             length(c(ids_withboth.full, ids_withboth.mini)))
+curdat[4,] = c("Total", sum(curdat$`No. of Students`),  NA)
+curdat$`No. of Students` = as.numeric(curdat$`No. of Students`)
+curdat$Percentage = curdat$`No. of Students`/ sum(curdat$`No. of Students`[1:3])
+
+mydat = curdat[1:3,c(1,3)] 
+mydat$`Rating Periods` = factor(mydat$`Rating Periods`, 
+                               levels = c("1st Only", "Both", "2nd Only"))
+
+ggplot(mydat, aes(x = `Rating Periods`, y = Percentage)) +
+  geom_bar(stat = "identity", position = 'dodge', fill = '#619CFF', width = 0.7) +
+  ylab("Percentage (%)") +
+  xlab("Rating Period(s)") +
+  ggtitle("2021-2022 Academic Year Rating Periods 1 and 2") +
+  scale_y_continuous(labels = scales::percent)
+```
+
+```{r echo=FALSE}
+curdat$Percentage = percent(curdat$Percentage, digits = 2)
+curdat$Percentage = cell_spec(curdat$Percentage, color = ifelse(curdat$Percentage < 0,
+                                                     "black", "black"))
+
+colnames(curdat) = c("Rating Periods", "Number of Students", "Percentage (\\%)")
+
+kbl(curdat, booktabs = T, escape = F, linesep = "") %>% 
+  kable_styling(latex_options = c("hold_position", "repeat_header", "striped"))
+```
+
+
+
